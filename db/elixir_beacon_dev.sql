@@ -16,6 +16,16 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Current Database: `elixir_beacon_dev`
+--
+
+/*!40000 DROP DATABASE IF EXISTS `elixir_beacon_dev`*/;
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `elixir_beacon_dev` /*!40100 DEFAULT CHARACTER SET latin1 */;
+
+USE `elixir_beacon_dev`;
+
+--
 -- Table structure for table `adam_table`
 --
 
@@ -312,6 +322,12 @@ INSERT INTO `consent_code_table` VALUES (1,'No restrictions','NRES','No restrict
 UNLOCK TABLES;
 
 --
+-- Current Database: `elixir_beacon_dev`
+--
+
+USE `elixir_beacon_dev`;
+
+--
 -- Final view structure for view `beacon_data`
 --
 
@@ -392,4 +408,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-06 10:51:01
+-- Dump completed on 2017-10-14  7:49:52
