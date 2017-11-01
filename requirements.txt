@@ -1,0 +1,9 @@
+click
+coloredlogs
+
+#parsing VCFs
+cyvcf2
+
+# connection to db
+pymysql
+ConfigParser
