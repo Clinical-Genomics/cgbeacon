@@ -12,9 +12,9 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'vcf_beaconizer'
+NAME = 'cgbeacon'
 DESCRIPTION = 'Extracts variants from a VCF file and inserts them into a Beacon MySQL database'
-URL = 'https://github.com/northwestwitch/vcf_beaconizer'
+URL = 'https://github.com/Clinical-Genomics/cgbeacon'
 EMAIL = 'chiara.rasi@scilifelab.se'
 AUTHOR = 'Chiara Rasi'
 
@@ -108,7 +108,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'vcf_beaconizer = vcf_beaconizer.cli.root:cli'
+            'cgbeacon = cgbeacon.cli.root:cli'
         ],
     },
 

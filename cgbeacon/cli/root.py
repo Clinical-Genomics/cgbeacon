@@ -8,8 +8,8 @@ import coloredlogs
 
 from cyvcf2 import VCF
 
-from vcf_beaconizer.utils.vcfparser import count_variants, get_samples, get_variants
-from vcf_beaconizer.utils.mysql_handler import db_handler
+from cgbeacon.utils.vcfparser import count_variants, get_samples, get_variants
+from cgbeacon.utils.mysql_handler import db_handler
 
 LOG = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ def cli(vcf, qual, ref, dataset, samples):
         vcf_obj = VCF(vcf)
     except:
         LOG.critical('Please provide a valid path to a VCF file!')
-        print("Usage: vcf_beaconizer --vcf path/to/vcf_file --qual [0-99] --ref grch37 --dataset dataset_name  <sample1> <sample2> .. \n\n")
+        print("Usage: cgbeacon --vcf path/to/vcf_file --qual [0-99] --ref grch37 --dataset dataset_name  <sample1> <sample2> .. \n\n")
         sys.exit()
 
     vcfsamples = get_samples(vcf_obj)
