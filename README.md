@@ -2,6 +2,21 @@
 
 Instructions and files to set up an Elixir-based beacon connected to a MySQL database.
 
+- [CGbeacon](#cgbeacon)
+  * [What is a Beacon?](#what-is-a-beacon-)
+  * [Purpose](#purpose)
+  * [Backend](#backend)
+    + [Requirements:](#requirements-)
+    + [Database setup:](#database-setup-)
+    + [Java Beacon installation:](#java-beacon-installation-)
+    + [Beacon setup:](#beacon-setup-)
+    + [Deploying the Beacon:](#deploying-the-beacon-)
+    + [Queries:](#queries-)
+    + [Populate the databases with your data](#populate-the-databases-with-your-data)
+      - [Installation](#installation)
+      - [Database settings](#database-settings)
+      - [Usage](#usage)
+
 ## What is a Beacon?
 Beacons are web-based discovery services for genetic variants. They are useful to know if the dataset present at any institution connected to the beacon network contains a given allele (or genetic variant). Beacons are an efficient way to share valuable genetic information without overly expose genomic data, due to privacy or security issues.
 
