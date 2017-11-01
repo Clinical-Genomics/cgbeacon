@@ -151,7 +151,7 @@ The possible answer to a query to the beacon would be :
 
 You can use the software from this repository to parse VCF files and insert into the databases your own data.
 
-## Installation
+#### Installation
 Clone this repository in a local directory using the following command:
 <pre>
 git clone https://github.com/Clinical-Genomics/cgbeacon.git
@@ -167,10 +167,10 @@ Install the package:
 pip install .
 </pre>
 
-## Database settings
+#### Database settings
 Database settings are specified in the file <b>settings/mysqlconfig.txt</b>. Consider to modify this file before testing the executable.
 
-## Usage
+#### Usage
 The program parses variants from a VCF file. Samples to be included in the Beacon database and variant quality threshold might be specified as optional parameters.
 
 To execute the program:
