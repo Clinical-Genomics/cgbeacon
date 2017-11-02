@@ -29,7 +29,7 @@ This document illustrates how to set up a beacon based on the [Elixir beacon v.0
 These instructions follow those present on the Elixir Beacon's ones but differ from them for the setup of a MySQL database instead.
 
 ### Requirements:
-* MySQL server
+* MySQL server 5.7
 * Java 8 JDK
 * Apache Maven 3<br>
 
