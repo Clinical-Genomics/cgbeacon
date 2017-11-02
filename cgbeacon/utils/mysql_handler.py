@@ -34,6 +34,7 @@ def set_db_params():
         db_settings.append( config['database']['password'] )
         db_settings.append( config['database']['host'] )
         db_settings.append( config['database']['db'] )
+        db_settings.append( config['database']['port'] )
 
     except:
         LOG.critical('There was a problem parsing the database settings file, please check file parameters')
@@ -55,6 +56,7 @@ def connect_to_db():
                                  password=db_settings[1],
                                  host=db_settings[2],
                                  db=db_settings[3],
+                                 port=db_settings[4],
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
     return connection
