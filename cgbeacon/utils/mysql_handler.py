@@ -56,7 +56,7 @@ def connect_to_db():
                                  password=db_settings[1],
                                  host=db_settings[2],
                                  db=db_settings[3],
-                                 port=db_settings[4],
+                                 port=int(db_settings[4]),
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
     return connection
