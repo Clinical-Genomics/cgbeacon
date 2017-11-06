@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import warnings
-import pymysql.cursors
+import pymysql
 import configparser
 import os.path
 import sys
@@ -56,7 +56,7 @@ def connect_to_db():
                                  password=db_settings[1],
                                  host=db_settings[2],
                                  db=db_settings[3],
-                                 port=db_settings[4],
+                                 port=int(db_settings[4]),
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
     return connection
@@ -187,7 +187,7 @@ def db_handler(reference, dataset, variant_dict):
         if updated_datasets:
             LOG.info('Dataset table was also updated')
         else:
-            LOG.info('Dataset table was up-to-date')
+            LOG.info('Dataset was already present in db')
 
     else:
         LOG.warning('No variants could be inserted from this VCF file!')
