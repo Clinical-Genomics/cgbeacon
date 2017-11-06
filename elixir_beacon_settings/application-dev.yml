@@ -1,0 +1,20 @@
+#properties
+#sample #1
+querySamples:
+  assembly-id-1: GRCh37
+  position-1: 16385041
+  reference-name-1: 1
+  alternate-bases-1:
+  dataset-ids-1:
+#sample #2
+  assembly-id-2: GRCh37
+  position-2: 16385041
+  reference-name-2: 1
+  alternate-bases-2:
+  dataset-ids-2: clinGen
+#sample #3
+  assembly-id-3: GRCh37
+  position-3: 16385041
+  reference-name-3: 1
+  alternate-bases-3: A
+  dataset-ids-3: clinGen
