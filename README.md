@@ -110,7 +110,8 @@ datasource.elixirbeacon.driverClassName = com.mysql.jdbc.Driver
 3. spring.jpa.properties.hibernate.dialect = ~~org.hibernate.dialect.PostgreSQLDialect~~ becomes:
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQLDialect
 
-Other information such as the beacon id, name, description etc. can be customized by modifying parameters in this file. When deploying a new beacon it is also necessary to modify the file <b>human-data-beacon/elixir_beacon/src/main/resources/application-dev.yml</b>. An example of these two files can be found in the folder [elixir_beacon_settings](elixir_beacon_settings).<br><br>
+Other information such as the beacon id, name, description etc. can be customized by modifying parameters in this file. <br>
+When deploying a new beacon it is also necessary to modify the file <br> <b>human-data-beacon/elixir_beacon/src/main/resources/application-dev.yml</b>. An example of these two files can be found in the folder [elixir_beacon_settings](elixir_beacon_settings).<br><br>
 
 ### Deploying the Beacon:
 Next step is to compile and test the beacon. From terminal change directory to **human-data-beacon/elixir_beacon**. Then type:
