@@ -51,15 +51,20 @@ def connect_to_db():
     """
     Connects to beacon mysql database
     """
-    LOG.info('Connectiong to db %s', db_settings[3])
-    connection = pymysql.connect(user=db_settings[0],
-                                 password=db_settings[1],
-                                 host=db_settings[2],
-                                 db=db_settings[3],
-                                 port=int(db_settings[4]),
-                                 charset='utf8mb4',
-                                 cursorclass=pymysql.cursors.DictCursor)
-    return connection
+    try:
+        LOG.info('Connectiong to db %s', db_settings[3])
+        connection = pymysql.connect(user=db_settings[0],
+                                     password=db_settings[1],
+                                     host=db_settings[2],
+                                     db=db_settings[3],
+                                     port=int(db_settings[4]),
+                                     charset='utf8mb4',
+                                     cursorclass=pymysql.cursors.DictCursor)
+        return connection
+    except Exception as e:
+        LOG.error('Unexpected error:%s',e)
+        return
+
 
 def close_connection(conn):
     """
@@ -73,13 +78,19 @@ def get_variant_number(conn):
 
     try:
         with conn.cursor() as cursor:
-            sql = 'select count(*) from `beacon_data_table`'
+            sql = 'select count(*) as n_vars from beacon_data_table'
             cursor.execute(sql)
             result = cursor.fetchone()
-            LOG.info('----> number of variants in this beacon:%s',result)
+            nvars = result['n_vars']
+            LOG.info('----> number of variants in this beacon:%s',nvars)
+            return nvars
     except:
         LOG.error('Unexpected error:%s',sys.exc_info()[0])
+        print('error',sys.exc_info()[0])
         conn.close()
+        return
+
+
 
 def insert_variants(conn, dataset, variant_dict):
     """
@@ -175,6 +186,9 @@ def db_handler(reference, dataset, variant_dict):
     #connect to db:
     conn = connect_to_db()
 
+    #variants before:
+    time0_vars = get_variant_number(conn)
+
     #insert variants:
     inserted_variants = insert_variants(conn, dataset, variant_dict)
 
@@ -195,6 +209,9 @@ def db_handler(reference, dataset, variant_dict):
     #close connection:
     close_connection(conn)
 
+    # return number of variants in beacon before and after adding the VCF file:
+    return (time0_vars, inserted_variants)
+
 
 def test_connection():
     """
@@ -206,10 +223,15 @@ def test_connection():
     set_db_params()
     #try connection:
     conn = connect_to_db()
+    if conn:
+        print("Connection to db established!")
+    else:
+        print("Couldn't connect to db, please check connection settings and try again!")
     #get number of variants in db:
-    get_variant_number(conn)
+    print("n. of variants in this beacon ---> ", get_variant_number(conn))
     #close connection:
     close_connection(conn)
+    print("connection closed.\n")
 
 if __name__ == '__main__':
     test_connection()

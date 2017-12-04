@@ -1,9 +1,15 @@
 click
 coloredlogs
 
-#parsing VCFs
+# parsing VCFs
 cyvcf2
 
 # connection to db
 pymysql
 ConfigParser
+
+# filtering for gene panels
+pybedtools
+
+# generating a PDF report
+reportlab
