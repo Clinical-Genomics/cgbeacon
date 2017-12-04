@@ -198,5 +198,8 @@ Optional parameters:
 <pre>
 --qual [0-99] (variant quality threshold. default=20)
 --ref chr_build (default is grch37)
+--use_panel path_to_gene_panel_bed_file (filter VCF file to use only intervals from a gene panel)
+--pdf_report (specify if a pdf output with the results of submission to Beacon should be created, the report will be created under cgbeacon/temp)
+--customer customer_id (a text string with the name of the customer/institution owning the samples in the VCF file)
 [list of samples to process separated by space] (Default is all samples found in the VCF file)
 </pre>

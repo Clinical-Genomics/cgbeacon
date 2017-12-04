@@ -12,7 +12,7 @@ def count_variants(vcf):
     """Count the number of variants in a vcf file
 
     Args:
-        vcf(iterable): An iterable with variants
+        vcf(iterable): An iterable VCF with variants
 
     Returns:
         nr_variants(int): Number of variants in file
@@ -51,7 +51,6 @@ def get_variants(vcf, sample_list = [], qual_filter = 20.0):
         discaded_vars are the variants with quality < QUAL
 
     """
-
     # If a string is provided (a path to a VCF?), try to transform it into a VCF object:
     if type(vcf) == str:
         try:
@@ -64,7 +63,7 @@ def get_variants(vcf, sample_list = [], qual_filter = 20.0):
     # 0 -> Homoz. wild type
     # 1 -> Heteroz. alt allele
     # 2 -> Not covered (unknown)
-    # 3 -> Homoz. for the alt allele
+    # 3 -> Homoz. for the alt. allele
 
     # create a dictionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
 
@@ -74,7 +73,6 @@ def get_variants(vcf, sample_list = [], qual_filter = 20.0):
 
     varCounter = 0
     discarded = 0
-
 
     # Check which samples must be inserted into the beacon
     idx = []
@@ -140,6 +138,5 @@ def get_variants(vcf, sample_list = [], qual_filter = 20.0):
 
                         sampleCounter += 1
                     gt_counter +=1
-
 
     return (varCounter, samplevars, sampleDiscards)
