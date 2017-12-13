@@ -48,6 +48,7 @@ def cli(vcf, qual, ref, dataset, use_panel, samples, pdf_report, customer):
 
     #get the raw number of variants from the original VCF file (used to produce report later)
     raw_variants = count_variants(vcf_obj)
+    vcf_obj = VCF(vcf) #required, since to count the number of variants it reaches the end of the iterator
 
     # If gene panel is provided, then extract from VCF file only variants contained in its intervals.
     if use_panel:
@@ -65,7 +66,6 @@ def cli(vcf, qual, ref, dataset, use_panel, samples, pdf_report, customer):
         else:
             LOG.critical("Couldn't filter VCF file gene panel intervals. Please check that gene panel is a valid bed file.")
             sys.exit()
-
 
     vcfsamples = get_samples(vcf_obj)
 

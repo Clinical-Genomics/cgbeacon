@@ -66,77 +66,81 @@ def get_variants(vcf, sample_list = [], qual_filter = 20.0):
     # 3 -> Homoz. for the alt. allele
 
     # create a dictionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
-
     #create keys from  sample list and empty lists as their values
-    samplevars = {sample : [] for sample in sample_list}
-    sampleDiscards = {sample : 0 for sample in sample_list}
 
-    varCounter = 0
-    discarded = 0
+    try:
+        samplevars = {sample : [] for sample in sample_list}
+        sampleDiscards = {sample : 0 for sample in sample_list}
 
-    # Check which samples must be inserted into the beacon
-    idx = []
+        varCounter = 0
+        discarded = 0
 
-    vcf_samples = get_samples(vcf)
-    for sample in vcf_samples:
-        if sample in sample_list:
-            idx.append(True)
-        else:
-            idx.append(False)
+        # Check which samples must be inserted into the beacon
+        idx = []
 
-    # loop over each variant (VCF line)
-    for v in vcf:
+        vcf_samples = get_samples(vcf)
 
-        varCounter += 1
+        for sample in vcf_samples:
+            if sample in sample_list:
+                idx.append(True)
+            else:
+                idx.append(False)
 
-        if len(v.ALT) == 1: # there is just one alternate allele for samples in this VCF line
+        # loop over each variant (VCF line)
+        for v in vcf:
+            varCounter += 1
+            if len(v.ALT) == 1: # there is just one alternate allele for samples in this VCF line
 
-            # loop over the samples GT, QUALs and Depths
-            sampleCounter = 0
-
-            gt_counter = 0
-
-            # looping over the genotype of each sample
-            for gt in v.gt_types:
-
-                # If it'a a sample to be saved in the beacon
-                if idx[gt_counter]:
-
-                    qual = int(v.gt_quals[sampleCounter])
-
-                    #store it, but only if QUAL > qual and the position is covered
-                    if qual >= qual_filter and not gt=="2":
-
-                        # append a tuple with (chr, start, alt) with this variant to the list of variants (tuples) of this sample:
-                        samplevars[ sample_list[sampleCounter] ].append( (v.CHROM, v.start, v.ALT[0] ) )
-
-                    else:
-                        # It's discarded, so increment counter for dicarded vars for this sample
-                        sampleDiscards[ sample_list[sampleCounter] ] += 1
-
-                    sampleCounter +=1
-                gt_counter +=1
-
-
-        else: # multiple alleles at this position, take care of it!
-
-            # loop over the multiple alternate alleles:
-            for i in range(len(v.ALT)):
-
-                #loop over the GTs of each sample and see if variant is there:
+                # loop over the samples GT, QUALs and Depths
                 sampleCounter = 0
+
+                gt_counter = 0
 
                 # looping over the genotype of each sample
                 for gt in v.gt_types:
 
                     # If it'a a sample to be saved in the beacon
                     if idx[gt_counter]:
+
+                        qual = int(v.gt_quals[sampleCounter])
+
                         #store it, but only if QUAL > qual and the position is covered
                         if qual >= qual_filter and not gt=="2":
-                            # append a tuple with (chr, start, alt) with this variant to the list of variants (tuples) of this sample:
-                            samplevars[ sample_list[sampleCounter] ].append( (v.CHROM, v.start, v.ALT[i] ) )
 
-                        sampleCounter += 1
+                            # append a tuple with (chr, start, alt) with this variant to the list of variants (tuples) of this sample:
+                            samplevars[ sample_list[sampleCounter] ].append( (v.CHROM, v.start, v.ALT[0] ) )
+
+                        else:
+                            # It's discarded, so increment counter for dicarded vars for this sample
+                            sampleDiscards[ sample_list[sampleCounter] ] += 1
+
+                        sampleCounter +=1
                     gt_counter +=1
 
-    return (varCounter, samplevars, sampleDiscards)
+
+            else: # multiple alleles at this position, take care of it!
+
+                # loop over the multiple alternate alleles:
+                for i in range(len(v.ALT)):
+
+                    #loop over the GTs of each sample and see if variant is there:
+                    sampleCounter = 0
+
+                    # looping over the genotype of each sample
+                    for gt in v.gt_types:
+
+                        # If it'a a sample to be saved in the beacon
+                        if idx[gt_counter]:
+                            #store it, but only if QUAL > qual and the position is covered
+                            if qual >= qual_filter and not gt=="2":
+                                # append a tuple with (chr, start, alt) with this variant to the list of variants (tuples) of this sample:
+                                samplevars[ sample_list[sampleCounter] ].append( (v.CHROM, v.start, v.ALT[i] ) )
+
+                            sampleCounter += 1
+                        gt_counter +=1
+
+        return (varCounter, samplevars, sampleDiscards)
+
+    except Exception as e:
+        LOG.critical(e)
+        return False

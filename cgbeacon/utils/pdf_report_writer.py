@@ -49,7 +49,7 @@ def create_report(title, panel, raw_variants, qual, VCF_parsing_results, databas
         pdf.setFont('Helvetica', 11)
 
         xcoord = 560
-        panel = panel.split("/")
+
 
         if customer_id:
             pdf.drawString(38, xcoord, "Upload ordered by user: " + str(customer_id))
@@ -59,6 +59,7 @@ def create_report(title, panel, raw_variants, qual, VCF_parsing_results, databas
         xcoord -= 20
 
         if panel:
+            panel = panel.split("/")
             pdf.drawString(38, xcoord, "VCF file was filtered using panel: " + str(panel [ len(panel)-1 ] ))
             xcoord -= 20
 
@@ -67,7 +68,7 @@ def create_report(title, panel, raw_variants, qual, VCF_parsing_results, databas
 
         pdf.drawString(38, xcoord, "Min. quality used to filter VCF variants: " + str(qual))
         xcoord -= 20
-        
+
         pdf.line(38,xcoord,575,xcoord)
         xcoord -= 10
         pdf.drawString(38, xcoord, "Samples")
@@ -89,7 +90,7 @@ def create_report(title, panel, raw_variants, qual, VCF_parsing_results, databas
         xcoord -= 20
         pdf.drawString(38, xcoord, "Number of variants in Beacon BEFORE submission: " + str(database_insert_results[0]))
         xcoord -= 20
-        pdf.drawString(38, xcoord, "Number of variants submitted to Beacon: " + str(database_insert_results[1]))
+        pdf.drawString(38, xcoord, "Number of new variants submitted to Beacon: " + str(database_insert_results[1]))
         xcoord -= 20
         pdf.drawString(38, xcoord, "Number of variants in Beacon AFTER submission: " + str(database_insert_results[0]+database_insert_results[1]))
 

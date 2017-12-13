@@ -36,8 +36,8 @@ def set_db_params():
         db_settings.append( config['database']['db'] )
         db_settings.append( config['database']['port'] )
 
-    except:
-        LOG.critical('There was a problem parsing the database settings file, please check file parameters')
+    except Exception as e:
+        LOG.critical('There was a problem parsing the database settings file:%s', e)
         sys.exit()
 
     if len(db_settings) < 4 or '' in db_settings:
