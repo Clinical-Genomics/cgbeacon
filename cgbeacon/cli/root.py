@@ -16,19 +16,18 @@ from cgbeacon.utils.pdf_report_writer import create_report
 
 LOG = logging.getLogger(__name__)
 
-
 @click.command()
-@click.option('--vcf', type=click.Path(exists=True), nargs=1)
-@click.option('--qual', type=click.FLOAT, nargs=1, default=20)
-@click.option('--ref', type=click.STRING, nargs=1, default='grch37')
-@click.option('--dataset', type=click.STRING, nargs=1, required=True)
-@click.option('--use_panel', type=click.Path(exists=True), nargs=1, required=False)
-@click.argument('samples', nargs=-1, type=click.STRING, default = None)
-@click.option('--pdf_report', is_flag=True, required=False)
-@click.option('--customer', type=click.STRING, nargs=1, required=False)
+@click.option('--dataset', type=click.STRING, nargs=1, required=True, help='A string representing the dataset name, don\'t use spaces')
+@click.option('--vcf', type=click.Path(exists=True), nargs=1, required=True, help='A VCF file')
+@click.option('--qual', type=click.FLOAT, nargs=1, default=20, help='Variant quality threshold (default>=20)')
+@click.option('--ref', type=click.STRING, nargs=1, default='grch37', help='Chromosome build (default=grch37)')
+@click.option('--use_panel', type=click.Path(exists=True), nargs=1, required=False, help='Path to bed file to filter VCF file')
+@click.option('--pdf_report', is_flag=True, required=False, help='Use this flag to generate a pdf report')
+@click.option('--customer', type=click.STRING, nargs=1, required=False, help='Used for generating the pdf report')
+@click.argument('samples', nargs=-1, type=click.STRING, default = None, required=False)
 
-def cli(vcf, qual, ref, dataset, use_panel, samples, pdf_report, customer):
-    """Simple program that parses a VCF file and store the variants in a MySQL database."""
+def cli( dataset,vcf, qual, ref, use_panel, pdf_report, customer, samples):
+    """Simple program that parses a VCF file and stores the variants in a MySQL database."""
 
     #checking that the quality filter values is a valid float in the range 0-99
     if qual > 99 or qual <0:
@@ -43,7 +42,6 @@ def cli(vcf, qual, ref, dataset, use_panel, samples, pdf_report, customer):
         vcf_obj = VCF(vcf)
     except:
         LOG.critical('Please provide a valid path to a VCF file!')
-        print("Usage: cgbeacon --vcf path/to/vcf_file --qual [0-99] --ref grch37 --dataset dataset_name  < --use_panel gene_panel.bed > <sample1> <sample2> <samplen> < --pdf_report > < --customer customer_id > \n\n")
         sys.exit()
 
     #get the raw number of variants from the original VCF file (used to produce report later)
@@ -109,20 +107,20 @@ def _print_results(results, qual):
                 3) Discarded variants for each sample
     """
 
-    print("\n\n\n")
+    click.echo("\n\n\n")
 
     # print n. of variants found:
-    print("#" * 80)
-    print("total number of variants in this file:",results[0], ", QUAL filter >=", qual)
-    print("#" * 80)
-    print("\n")
+    click.echo("#" * 80)
+    click.echo("total number of variants in this file:%s, QUAL filter >=%s" % (results[0], qual))
+    click.echo("#" * 80)
+    click.echo("\n")
 
-    print("{0:<40}{1:^15}{2:>15}".format("samples", "include in beacon", "discarded"))
+    click.echo("{0:<40}{1:^15}{2:>15}".format("samples", "include in beacon", "discarded"))
     count=0
     for keys, values in results[1].items():
         count +=1
-        print("{0:<40}{1:^15}{2:>15}".format( keys, len(values), results[2][keys] ))
-    print("\n\n")
+        click.echo("{0:<40}{1:^15}{2:>15}".format( keys, len(values), results[2][keys] ))
+    click.echo("\n\n")
 
 
 def _compare_samples(vcfsamples, usersamples):
@@ -143,8 +141,8 @@ def _compare_samples(vcfsamples, usersamples):
             sys.exit()
 
         if not valid_samples:
-            print("\nPlease provide at least a valid sample to insert into beacon!")
-            print("valid samples are: ",", ".join(vcfsamples),"\n")
+            click.echo("\nPlease provide at least a valid sample to insert into beacon!")
+            click.echo("valid samples are: ",", ".join(vcfsamples),"\n")
             sys.exit()
 
     return valid_samples
