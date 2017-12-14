@@ -8,8 +8,11 @@ cyvcf2
 pymysql
 ConfigParser
 
+# Showing database insert ProgressBar
+enlighten
+
 # filtering for gene panels
-pybedtools
+enlighten
 
 # generating a PDF report
 reportlab

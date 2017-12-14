@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import warnings
-import pymysql
-import configparser
-import os.path
-import sys
-import logging
+import click
 import coloredlogs
+import configparser
+import logging
+import os.path
+import enlighten
+import pymysql
+import sys
+import warnings
 
 db_settings = []
 LOG = logging.getLogger(__name__)
@@ -92,20 +94,26 @@ def get_variant_number(conn):
 
 
 
-def insert_variants(conn, dataset, variant_dict):
+def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
     """
     Inserts variants into beacon
     """
     insert_counter=0
 
     LOG.info('Inserting variants into database..')
+
     #loop over each sample(key) of the dictionary:
+    click.echo("variants to process:%s" % vars_to_beacon)
+    pbar = enlighten.Counter(total=vars_to_beacon, desc='', unit='ticks')
+
     for keys, values in variant_dict[1].items():
 
         #loop over each variant tuple for the sample
         for val in values:
+
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore', pymysql.Warning)
+
                 try:
                     with conn.cursor() as cursor:
                         sql='INSERT IGNORE INTO beacon_data_table (dataset_id, chromosome, position, alternate) VALUES (%s, %s, %s, %s)'
@@ -116,6 +124,8 @@ def insert_variants(conn, dataset, variant_dict):
 
                 except:
                     LOG.error('Unexpected error:%s',sys.exc_info()[0])
+
+                pbar.update()
 
     return insert_counter
 
@@ -176,7 +186,7 @@ def update_datasets(conn, dataset, build='grch37'):
 
     return updates
 
-def db_handler(reference, dataset, variant_dict):
+def db_handler(reference, dataset, variant_dict, vars_to_beacon):
     """
     Handles the connection to beacon mysql db and variant data entry.
     """
@@ -190,7 +200,7 @@ def db_handler(reference, dataset, variant_dict):
     time0_vars = get_variant_number(conn)
 
     #insert variants:
-    inserted_variants = insert_variants(conn, dataset, variant_dict)
+    inserted_variants = insert_variants(conn, dataset, variant_dict, vars_to_beacon)
 
     if inserted_variants:
         LOG.info('Number of new inserted variants from the VCF file:%s',inserted_variants)

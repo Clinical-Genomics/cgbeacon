@@ -76,12 +76,12 @@ def cli( dataset,vcf, qual, ref, use_panel, pdf_report, customer, samples):
     vcf_results = get_variants(vcf_obj, vcfsamples, qual)
 
     ## Print overall results of VCF file parsing to terminal
-    _print_results(vcf_results, qual)
+    vars_to_beacon = _print_results(vcf_results, qual)
 
     ## Insert variants in database:
     LOG.info('Connecting to beacon db:')
 
-    beacon_update_result = db_handler(ref, dataset, vcf_results)
+    beacon_update_result = db_handler(ref, dataset, vcf_results, vars_to_beacon)
 
     if not customer:
         customer = ''
@@ -106,6 +106,7 @@ def _print_results(results, qual):
                 2) Variants to be imported in database for each sample
                 3) Discarded variants for each sample
     """
+    vars_to_beacon = 0
 
     click.echo("\n\n\n")
 
@@ -120,8 +121,10 @@ def _print_results(results, qual):
     for keys, values in results[1].items():
         count +=1
         click.echo("{0:<40}{1:^15}{2:>15}".format( keys, len(values), results[2][keys] ))
+        vars_to_beacon += len(values)
     click.echo("\n\n")
 
+    return vars_to_beacon
 
 def _compare_samples(vcfsamples, usersamples):
 
