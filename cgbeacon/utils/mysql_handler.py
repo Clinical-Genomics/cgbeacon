@@ -252,7 +252,6 @@ def bare_variants_uploader(conn, dataset, variant_dict, genome_reference):
     # return number of variants in beacon before and after adding the VCF file:
     return (time0_vars, inserted_variants)
 
-
 def test_connection():
     """
     Tests the connection to the beacon server
