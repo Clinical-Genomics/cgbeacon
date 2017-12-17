@@ -10,22 +10,23 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import cm
 import time
 
-def create_report(title, panel, raw_variants, qual, VCF_parsing_results, database_insert_results, customer_id=''):
+def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results, database_insert_results, customer_id=''):
     """Prints the variants upload to beacon results to a PDF report.
 
         Args:
             1) A title for this report
-            2) path to panel used to filter VCF file (if any)
-            3) quality filter used for filtering variants prior to upload to beacon
-            4) VCF parsing results [ A tuple defined as this: ( total_vars, discaded_vars(type: dict), beacon_vars(type: dict) )]
-            5) A tuple containing n. of variants in the beacon before and after the variants' upload.
-            6) Custer ID or name
+            2) Path folder to write outfile to
+            3) path to panel used to filter VCF file (if any)
+            4) quality filter used for filtering variants prior to upload to beacon
+            5) VCF parsing results [ A tuple defined as this: ( total_vars, discaded_vars(type: dict), beacon_vars(type: dict) )]
+            6) A tuple containing n. of variants in the beacon before and after the variants' upload.
+            7) Custer ID or name (Optional)
 
         What it does:
             Prints a PDF report with the results.
     """
     try:
-        outfile = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'temp', 'cgbeacon_'+str(time.strftime("%Y%m%d-%H%M%S"))+'.pdf'))
+        # Create pdf with outpath provided by user:
         pdf = canvas.Canvas(outfile, pagesize=letter)
         pdf.setLineWidth(.3)
         pdf.setFont('Helvetica', 10)
@@ -49,7 +50,6 @@ def create_report(title, panel, raw_variants, qual, VCF_parsing_results, databas
         pdf.setFont('Helvetica', 11)
 
         xcoord = 560
-
 
         if customer_id:
             pdf.drawString(38, xcoord, "Upload ordered by user: " + str(customer_id))

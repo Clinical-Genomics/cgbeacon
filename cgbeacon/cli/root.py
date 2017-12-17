@@ -19,14 +19,15 @@ LOG = logging.getLogger(__name__)
 @click.command()
 @click.option('--dataset', type=click.STRING, nargs=1, required=True, help='A string representing the dataset name, don\'t use spaces')
 @click.option('--vcf', type=click.Path(exists=True), nargs=1, required=True, help='A VCF file')
+@click.option('--db_connection', type=click.STRING, nargs=1, required=False, help='database connection string: mysql+pymysql://db_user:db_password@db_host:db_port/db_name')
 @click.option('--qual', type=click.FLOAT, nargs=1, default=20, help='Variant quality threshold (default>=20)')
 @click.option('--ref', type=click.STRING, nargs=1, default='grch37', help='Chromosome build (default=grch37)')
 @click.option('--use_panel', type=click.Path(exists=True), nargs=1, required=False, help='Path to bed file to filter VCF file')
-@click.option('--pdf_report', is_flag=True, required=False, help='Use this flag to generate a pdf report')
+@click.option('--outfile', type=click.Path(exists=False), required=False, help='Outfile to write pdf report to')
 @click.option('--customer', type=click.STRING, nargs=1, required=False, help='Used for generating the pdf report')
 @click.argument('samples', nargs=-1, type=click.STRING, default = None, required=False)
 
-def cli( dataset,vcf, qual, ref, use_panel, pdf_report, customer, samples):
+def cli( dataset, vcf, db_connection, qual, ref, use_panel, outfile, customer, samples):
     """Simple program that parses a VCF file and stores the variants in a MySQL database."""
 
     #checking that the quality filter values is a valid float in the range 0-99
@@ -81,16 +82,21 @@ def cli( dataset,vcf, qual, ref, use_panel, pdf_report, customer, samples):
     ## Insert variants in database:
     LOG.info('Connecting to beacon db:')
 
-    beacon_update_result = db_handler(ref, dataset, vcf_results, vars_to_beacon)
+    beacon_update_result = db_handler(dataset, vcf_results, vars_to_beacon, ref, db_connection)
 
     if not customer:
         customer = ''
 
-    if pdf_report:
+    if outfile:
         # print pdf report:
-        create_report('Clinical Genomics Beacon: variants upload report', use_panel, raw_variants, qual, vcf_results, beacon_update_result, customer)
+
+        LOG.info("Printing a pdf report with beacon upload results.")
+        create_report('Clinical Genomics Beacon: variants upload report', outfile, use_panel, raw_variants, qual, vcf_results, beacon_update_result, customer)
     else:
         LOG.info('NOT printing a pdf report for this data upload')
+
+    LOG.info("Upload finished.")
+
 
 # Prints results to the terminal. results is this tuple -> ( total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
 def _print_results(results, qual):
@@ -149,7 +155,6 @@ def _compare_samples(vcfsamples, usersamples):
             sys.exit()
 
     return valid_samples
-
 
 if __name__ == '__main__':
     cli()

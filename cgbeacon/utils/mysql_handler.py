@@ -8,6 +8,8 @@ import logging
 import os.path
 import enlighten
 import pymysql
+import sqlalchemy
+from sqlalchemy.engine import create_engine
 import sys
 import warnings
 
@@ -20,8 +22,21 @@ def get_config():
     """
     return os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'settings', 'mysqlconfig.txt'))
 
-#import mysql.connector
-def set_db_params():
+def use_mysqlalchemy(conn_url):
+    """
+    Connects to beacon database using a connection uls and mysqlalchemy
+    """
+    try:
+        engine = sqlalchemy.create_engine(conn_url, echo=False, encoding='utf-8')
+        connection = engine.connect()
+        return connection
+
+    except Exception as e:
+        LOG.critical('MysqlAlchemy was not able to use connection ulr:%s', e)
+        sys.exit()
+
+# Connect using mysqlconfig file:
+def create_conn_url():
     """
     Parses database config params
     """
@@ -47,52 +62,30 @@ def set_db_params():
         sys.exit()
 
     LOG.info('Connection params set.')
-    return
 
-def connect_to_db():
-    """
-    Connects to beacon mysql database
-    """
-    try:
-        LOG.info('Connectiong to db %s', db_settings[3])
-        connection = pymysql.connect(user=db_settings[0],
-                                     password=db_settings[1],
-                                     host=db_settings[2],
-                                     db=db_settings[3],
-                                     port=int(db_settings[4]),
-                                     charset='utf8mb4',
-                                     cursorclass=pymysql.cursors.DictCursor)
-        return connection
-    except Exception as e:
-        LOG.error('Unexpected error:%s',e)
-        return
-
+    # Return connection url to be used in use_mysqlalchemy
+    connect_string = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(db_settings[0], db_settings[1], db_settings[2], db_settings[4], db_settings[3])
+    return connect_string
 
 def close_connection(conn):
     """
     Closes connection to database
     """
-
     conn.close()
     return
 
 def get_variant_number(conn):
 
     try:
-        with conn.cursor() as cursor:
-            sql = 'select count(*) as n_vars from beacon_data_table'
-            cursor.execute(sql)
-            result = cursor.fetchone()
-            nvars = result['n_vars']
-            LOG.info('----> number of variants in this beacon:%s',nvars)
-            return nvars
+        sql = 'select count(*) as n_vars from beacon_data_table'
+        result = conn.execute(sql)
+        row = result.fetchone()
+        return row['n_vars']
+
     except:
         LOG.error('Unexpected error:%s',sys.exc_info()[0])
-        print('error',sys.exc_info()[0])
         conn.close()
         return
-
-
 
 def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
     """
@@ -115,12 +108,9 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                 warnings.simplefilter('ignore', pymysql.Warning)
 
                 try:
-                    with conn.cursor() as cursor:
-                        sql='INSERT IGNORE INTO beacon_data_table (dataset_id, chromosome, position, alternate) VALUES (%s, %s, %s, %s)'
-
-                        cursor.execute(sql,( dataset, val[0], val[1], val[2]))
-                        conn.commit()
-                        insert_counter += cursor.rowcount
+                    sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
+                    result = conn.execute(sql, dataset, val[0], val[1], val[2])
+                    insert_counter += result.rowcount
 
                 except:
                     LOG.error('Unexpected error:%s',sys.exc_info()[0])
@@ -136,27 +126,29 @@ def variants_per_dataset(conn, dataset):
     nvars=0
 
     try:
-        with conn.cursor() as cursor:
-            sql='select count(*) as vars from beacon_data_table where dataset_id=%s'
-            cursor.execute(sql,dataset)
-            result = cursor.fetchone()
-            nvars = result['vars']
+        #with conn.cursor() as cursor:
+        sql='select count(*) as vars from beacon_data_table where dataset_id=%s'
+        result = conn.execute(sql,dataset)
+        row = result.fetchone()
+        nvars = row['vars']
+
     except:
         LOG.error('Unexpected error:%s',sys.exc_info()[0])
 
     return nvars
 
-def update_dataset_vars(conn, dataset, vars):
+def update_dataset_vars(conn, dataset, n_vars):
     """
     Updates the number of variants for a given dataset
     """
     try:
-        with conn.cursor() as cursor:
-            sql='update beacon_dataset_table set size=%s where id=%s'
-            cursor.execute(sql,(vars,dataset))
-            conn.commit()
+        sql = "pdate beacon_dataset_table set size=%s where id=%s;"
+        result = conn.execute(sql, n_vars, dataset)
+        return result.rowcount
+
     except:
         LOG.error('Unexpected error:%s',sys.exc_info()[0])
+        return
 
 def update_datasets(conn, dataset, build='grch37'):
     """
@@ -167,34 +159,34 @@ def update_datasets(conn, dataset, build='grch37'):
 
     #update dataset table:
     try:
-        with conn.cursor() as cursor:
-            sql='insert into beacon_dataset_table (id, description, access_type, reference_genome, size) VALUES (%s, %s, %s, %s, %s)'
-            cursor.execute(sql, (dataset, 'Sample variants','PUBLIC', build, n_variants))
+        sql = sql='insert into beacon_dataset_table (id, description, access_type, reference_genome, size) VALUES (%s, %s, %s, %s, %s);'
+        result = conn.execute(sql, dataset, 'Sample variants','PUBLIC', build, n_variants)
+        updates += result.rowcount
 
-            conn.commit()
-            updates += cursor.rowcount
-
+    # Handle the exception that occurrs when trying to insert the same dataset twice
     except pymysql.err.IntegrityError as e:
 
-        # if the dataset exists then just update the number of vars:
+        # if the dataset exists then just update the number of its vars:
         if 'Duplicate entry' in str(e) :
-            LOG.info('It look like dataset %s exists already. Updating number of variants for this dataset.',dataset)
-            update_dataset_vars(conn, dataset, n_variants)
+            LOG.info('It looks like dataset %s exists already. Updating number of variants for this dataset.',dataset)
+            updates = update_dataset_vars(conn, dataset, n_variants)
 
     except:
         LOG.error('Unexpected error:%s',sys.exc_info()[0])
 
     return updates
 
-def db_handler(reference, dataset, variant_dict, vars_to_beacon):
+def db_handler( dataset, variant_dict, vars_to_beacon, reference="grch37", connect_string="" ):
     """
     Handles the connection to beacon mysql db and variant data entry.
     """
-    #import parameter from con file:
-    set_db_params()
+    conn = None
 
-    #connect to db:
-    conn = connect_to_db()
+    if connect_string is False: #Extract connection params from settings file
+        # Connect using mysqlconfig file:
+        connect_string = set_db_params()
+
+    conn = use_mysqlalchemy(connect_string)
 
     #variants before:
     time0_vars = get_variant_number(conn)
@@ -206,7 +198,48 @@ def db_handler(reference, dataset, variant_dict, vars_to_beacon):
         LOG.info('Number of new inserted variants from the VCF file:%s',inserted_variants)
 
         #update dataset col:
-        updated_datasets = update_datasets(conn, dataset, 'grch37')
+        updated_datasets = update_datasets(conn, dataset, reference)
+
+        if updated_datasets:
+            LOG.info('Dataset table was updated')
+        else:
+            LOG.info('Dataset table was not updated')
+
+    else:
+        LOG.warning('No variants could be inserted from this VCF file!')
+
+    #close connection:
+    close_connection(conn)
+
+    # return number of variants in beacon before and after adding the VCF file:
+    return (time0_vars, inserted_variants)
+
+
+def bare_variants_uploader(conn, dataset, variant_dict, genome_reference):
+    """
+    Accepts a connection, the dataset name, the variants and a genome reference.
+    Returns the number of uploaded variants_per_dataset
+    """
+    n_insert_attemps=0
+
+    #Count how many variants are already present in the beacon:
+    time0_vars = get_variant_number(conn)
+
+    #loop over each variant tuple for the sample
+    for keys, values in variant_dict[1].items():
+
+        #Count the variants to be inserted:
+        for val in values:
+            n_insert_attemps +=1
+
+    # Try to insert variants
+    inserted_variants = insert_variants(conn, dataset, variant_dict, n_insert_attemps)
+
+    if inserted_variants:
+        LOG.info('Number of new inserted variants from the VCF file:%s',inserted_variants)
+
+        #update dataset table:
+        updated_datasets = update_datasets(conn, dataset, genome_reference)
 
         if updated_datasets:
             LOG.info('Dataset table was also updated')
@@ -215,9 +248,6 @@ def db_handler(reference, dataset, variant_dict, vars_to_beacon):
 
     else:
         LOG.warning('No variants could be inserted from this VCF file!')
-
-    #close connection:
-    close_connection(conn)
 
     # return number of variants in beacon before and after adding the VCF file:
     return (time0_vars, inserted_variants)
@@ -230,9 +260,8 @@ def test_connection():
     print("Testing connection to server.")
 
     #import parameter from con file:
-    set_db_params()
-    #try connection:
-    conn = connect_to_db()
+    #try connection with mysqlalchemy
+    conn = use_mysqlalchemy("mysql+pymysql://microaccounts_dev:r783qjkldDsiu@localhost:3306/elixir_beacon_testing")
     if conn:
         print("Connection to db established!")
     else:
@@ -240,7 +269,7 @@ def test_connection():
     #get number of variants in db:
     print("n. of variants in this beacon ---> ", get_variant_number(conn))
     #close connection:
-    close_connection(conn)
+    conn.close()
     print("connection closed.\n")
 
 if __name__ == '__main__':

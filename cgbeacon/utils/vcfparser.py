@@ -17,12 +17,18 @@ def count_variants(vcf):
     Returns:
         nr_variants(int): Number of variants in file
     """
+    if type(vcf) == str:
+        try:
+            vcf = VCF(vcf)
+        except:
+            LOG.critical('Please provide a valid path to a VCF file!')
+            sys.exit()
+
     nr_variants = 0
     for variant in vcf:
         nr_variants += 1
 
     return nr_variants
-
 
 def get_samples(vcf):
     """ Get the names of the samples contained in a VCF file
@@ -69,22 +75,27 @@ def get_variants(vcf, sample_list = [], qual_filter = 20.0):
     #create keys from  sample list and empty lists as their values
 
     try:
-        samplevars = {sample : [] for sample in sample_list}
-        sampleDiscards = {sample : 0 for sample in sample_list}
-
-        varCounter = 0
-        discarded = 0
-
         # Check which samples must be inserted into the beacon
         idx = []
-
         vcf_samples = get_samples(vcf)
+
+        # If no sample is pecified the use all samples in VCF file
+        if len(sample_list) == 0:
+            print("len(sample_list) == 0")
+            sample_list = vcf_samples
 
         for sample in vcf_samples:
             if sample in sample_list:
                 idx.append(True)
             else:
                 idx.append(False)
+
+        samplevars = {sample : [] for sample in sample_list}
+        sampleDiscards = {sample : 0 for sample in sample_list}
+
+        varCounter = 0
+        discarded = 0
+
 
         # loop over each variant (VCF line)
         for v in vcf:
