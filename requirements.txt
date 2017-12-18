@@ -13,7 +13,7 @@ SQLAlchemy
 enlighten
 
 # filtering for gene panels
-enlighten
+pybedtools
 
 # generating a PDF report
 reportlab
