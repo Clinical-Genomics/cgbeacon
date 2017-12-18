@@ -60,6 +60,7 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
 
         if panel:
             panel = panel.split("/")
+            panel = str(panel [ len(panel)-1 ] ).split(".")
             pdf.drawString(38, xcoord, "VCF file was filtered using panel: " + str(panel [ len(panel)-1 ] ))
             xcoord -= 20
 
