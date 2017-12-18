@@ -36,7 +36,7 @@ def use_mysqlalchemy(conn_url):
         sys.exit()
 
 # Connect using mysqlconfig file:
-def create_conn_url():
+def set_db_params():
     """
     Parses database config params
     """
@@ -176,13 +176,12 @@ def update_datasets(conn, dataset, build='grch37'):
 
     return updates
 
-def db_handler( dataset, variant_dict, vars_to_beacon, reference="grch37", connect_string="" ):
+def db_handler( dataset, variant_dict, vars_to_beacon, connect_string, reference="grch37"):
     """
     Handles the connection to beacon mysql db and variant data entry.
     """
     conn = None
-
-    if connect_string is False: #Extract connection params from settings file
+    if connect_string is None: #Extract connection params from settings file
         # Connect using mysqlconfig file:
         connect_string = set_db_params()
 

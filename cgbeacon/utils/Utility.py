@@ -4,24 +4,25 @@
 from cgbeacon.utils.mysql_handler import bare_variants_uploader
 from cgbeacon.utils.vcf_panel_filter import vcf_intersect
 from cgbeacon.utils.vcfparser import get_variants, count_variants
-from pdf_report_writer import create_report
+from cgbeacon.utils.pdf_report_writer import create_report
 
-def beacon_upload(vcf_path, panel_path, dataset, conn, outfile="", customer="", samples=[], qual=20, genome_reference="grch37"):
+def beacon_upload(connection, vcf_path, panel_path, dataset, outfile="", customer="", samples=None, qual=20, genome_reference="grch37"):
     """ This object is the backbone of the beacon importer.
 
         Args:
         1) Path to the VCF file
         2) Path to gene panel (or coordinates) to use to filter VCF file
         3) dataset name ( a string )
-        4) Connection object to the beacon database
-        5) Optional: An array of samples to be used for extracting variants from the VCF file
-        6) Optional: quality threshold to filter variants (use variants >=qual)
-        7) Optional: genome reference, default is grch37
+        4) Optional: An array of samples to be used for extracting variants from the VCF file
+        5) Optional: quality threshold to filter variants (use variants >=qual)
+        6) Optional: genome reference, default is grch37
 
         Creates a report file on the provided outpath
 
         Returns: number of new variants in the Beacon
     """
+    samples = samples or []
+
     # Get number of raw variants in original VCF file:
     raw_variants = count_variants(vcf_path)
 
@@ -43,13 +44,11 @@ def beacon_upload(vcf_path, panel_path, dataset, conn, outfile="", customer="", 
     beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
 
     # Print the pdf report with the variant upload results:
-    print("Printing a report with beacon upload results to --> ",outfile)
-    title = "Clinical Genomics Beacon: variants upload report"
-    create_report(title, outfile, panel_path, raw_variants, qual, vcf_results, beacon_update_result, customer)
+    if outfile:
+        print("Printing a report with beacon upload results to --> ",outfile)
+        title = "Clinical Genomics Beacon: variants upload report"
+        create_report(title, outfile, panel_path, raw_variants, qual, vcf_results, beacon_update_result, customer)
 
     # Return the number of new vars uploaded in beacon
     print("new vars in beacon:", beacon_update_result[1])
     return beacon_update_result[1]
-
-if __name__ == '__main__':
-    beacon_upload("path_to_VCF_file", "path_to_gene_panel", "dataset_name", None, "path_to_outfile" , "Chiara", ["sample1", "sample2", "sample3" ], 30, "grch38")

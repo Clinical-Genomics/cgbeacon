@@ -42,7 +42,7 @@ def get_samples(vcf):
     return vcf.samples
 
 
-def get_variants(vcf, sample_list = [], qual_filter = 20.0):
+def get_variants(vcf, sample_list = None, qual_filter = 20.0):
 
     """Parses VCF file collecting all variants passing a QUAL filter for each sample of sample_list.
 
