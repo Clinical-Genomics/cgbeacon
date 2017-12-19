@@ -77,7 +77,7 @@ def get_variants(vcf, sample_list = None, qual_filter = 20.0):
     print("In vcfparser.get_variants. Passed samples are:",sample_list)
     print("List of samples in VCF file:",get_samples(vcf))
 
-    if not any(i in sample_list for i in vcf):
+    if not any(i in sample_list for i in get_samples(vcf)):
         LOG.critical('Provided sample(s) not among the samples in VCF file. Aborting the upload.')
         sys.exit()
 
