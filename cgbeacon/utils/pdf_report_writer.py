@@ -36,7 +36,7 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         pdf.drawString(420,740, "cgbeacon:"+time.strftime("%x") + "," + time.strftime("%X"))
 
         #Set logo:
-        try
+        try:
             #logo = ImageReader(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'img', 'SLL_logo.png')))
             logo = ImageReader('https://github.com/Clinical-Genomics/cgbeacon/blob/master/img/SLL_logo.png')
             pdf.drawImage(logo, 20, 700, mask='auto', width=7*cm, height=2*cm)
