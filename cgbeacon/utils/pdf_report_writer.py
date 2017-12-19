@@ -37,8 +37,8 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
 
         #Set logo:
         try:
-            #logo = ImageReader(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'img', 'SLL_logo.png')))
-            logo = ImageReader('https://github.com/Clinical-Genomics/cgbeacon/blob/master/img/SLL_logo.png')
+            logo = ImageReader(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'img', 'SLL_logo.png')))
+        #    logo = ImageReader('https://github.com/Clinical-Genomics/cgbeacon/blob/master/img/SLL_logo.png')
             pdf.drawImage(logo, 20, 700, mask='auto', width=7*cm, height=2*cm)
         except:
             print("Couldn't fetch logo from the web. Printing PDF without it!")
