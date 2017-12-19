@@ -36,9 +36,12 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         pdf.drawString(420,740, "cgbeacon:"+time.strftime("%x") + "," + time.strftime("%X"))
 
         #Set logo:
-        logo = ImageReader(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'img', 'SLL_logo.png')))
-
-        pdf.drawImage(logo, 20, 700, mask='auto', width=7*cm, height=2*cm)
+        try
+            #logo = ImageReader(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'img', 'SLL_logo.png')))
+            logo = ImageReader('https://github.com/Clinical-Genomics/cgbeacon/blob/master/img/SLL_logo.png')
+            pdf.drawImage(logo, 20, 700, mask='auto', width=7*cm, height=2*cm)
+        except:
+            print("Couldn't fetch logo from the web. Printing PDF without it!")
         pdf.drawString(38,695,'Science for Life Laboratory')
         pdf.drawString(38,680,'Tomtebodavägen 23A 17165 Solna, Sweden.')
         pdf.drawString(38,665,'Clinical Genomics, Stockholm.')
