@@ -4,7 +4,7 @@
 import logging
 import coloredlogs
 import os
-
+from tempfile import NamedTemporaryFile
 from cyvcf2 import VCF
 from pybedtools import BedTool
 
@@ -37,12 +37,12 @@ def vcf_intersect(vcf_path, bed_panel):
         LOG.info('Extracting %s intervals from the %s total entries of the VCF file.', gene_panel.count(), vcf_file.count())
         LOG.info('Number of variants found in the intervals:%s', intersected_vars)
 
-        temp_intersections_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'temp', 'temp_intersections.txt'))
-        intersections.saveas(temp_intersections_path)
-        mini_VCF = VCF(temp_intersections_path)
+        temp_intersections_file = NamedTemporaryFile('w+t')
+        intersections.saveas(temp_intersections_file)
+        mini_VCF = VCF(temp_intersections_file)
 
         #remove temporary file:
-        os.remove(temp_intersections_path)
+        os.remove(temp_intersections_file)
 
         # Return a tuple with:
         # a mini-VCF file object
