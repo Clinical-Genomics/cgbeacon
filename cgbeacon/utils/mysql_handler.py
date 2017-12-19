@@ -238,11 +238,14 @@ def bare_variants_uploader(conn, dataset, variant_dict, genome_reference):
         LOG.info('Number of new inserted variants from the VCF file:%s',inserted_variants)
 
         #update dataset table:
-        updated_datasets = update_datasets(conn, dataset, genome_reference)
+        try:
+            updated_datasets = update_datasets(conn, dataset, genome_reference)
 
-        if updated_datasets:
-            LOG.info('Dataset table was also updated')
-        else:
+            if updated_datasets:
+                LOG.info('Dataset table was also updated')
+            else:
+                LOG.info('Dataset was already present in db')
+        except sqlalchemy.exc.IntegrityError:
             LOG.info('Dataset was already present in db')
 
     else:
