@@ -44,7 +44,7 @@ def vcf_intersect(vcf_path, bed_panel):
         mini_VCF = VCF(temp_intersections_file.name)
 
         #remove temporary file:
-        os.remove(temp_intersections_file)
+        os.remove(temp_intersections_file.name)
 
 
 
