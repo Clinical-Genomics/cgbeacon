@@ -74,6 +74,8 @@ def get_variants(vcf, sample_list = None, qual_filter = 20.0):
     # create a dictionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
     #create keys from  sample list and empty lists as their values
 
+    print("Im in vcfparser.get_variants. Samples are:",sample_list)
+    print("Samples in VCF are:",get_samples(vcf))
     try:
         # Check which samples must be inserted into the beacon
         idx = []
