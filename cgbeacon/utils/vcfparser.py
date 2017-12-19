@@ -76,6 +76,11 @@ def get_variants(vcf, sample_list = None, qual_filter = 20.0):
 
     print("In vcfparser.get_variants. Passed samples are:",sample_list)
     print("List of samples in VCF file:",get_samples(vcf))
+
+    if not set(sample_list).isdisjoint(vcf):
+        LOG.critical('Provided sample(s) not among the samples in VCF file. Aborting the upload.')
+        sys.exit()
+
     try:
         # Check which samples must be inserted into the beacon
         idx = []
