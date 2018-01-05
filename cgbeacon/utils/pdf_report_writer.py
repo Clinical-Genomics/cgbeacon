@@ -3,11 +3,12 @@
 
 import coloredlogs
 import logging
-import os.path
+import os.path, os.link
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import cm
+from tempfile import NamedTemporaryFile
 import time
 
 def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results, database_insert_results, customer_id=''):
@@ -20,14 +21,16 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
             4) quality filter used for filtering variants prior to upload to beacon
             5) VCF parsing results [ A tuple defined as this: ( total_vars, discaded_vars(type: dict), beacon_vars(type: dict) )]
             6) A tuple containing n. of variants in the beacon before and after the variants' upload.
-            7) Custer ID or name (Optional)
+            7) Customer ID or name (Optional)
+            8) Customer email (Optional)
 
         What it does:
             Prints a PDF report with the results.
     """
     try:
-        # Create pdf with outpath provided by user:
-        pdf = canvas.Canvas(outfile, pagesize=letter)
+        # Create temporary pdf file.
+        temp_file = NamedTemporaryFile(suffix='.pdf')
+        pdf = canvas.Canvas(temp_file, pagesize=letter)
         pdf.setLineWidth(.3)
         pdf.setFont('Helvetica', 10)
 
@@ -102,6 +105,9 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         pdf.drawString(500, 50, "page 1 of 1")
 
         pdf.save()
+        os.link(pdf.name, outfile)
+        os.remove(pdf.name)
+
 
     except Exception as e:
 
