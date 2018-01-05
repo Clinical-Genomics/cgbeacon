@@ -105,8 +105,8 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         pdf.drawString(500, 50, "page 1 of 1")
 
         pdf.save()
-        os.link(pdf.name, outfile)
-        os.remove(pdf.name)
+        os.link(temp_file.name, outfile)
+        os.remove(temp_file.name)
 
 
     except Exception as e:
