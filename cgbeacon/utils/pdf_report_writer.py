@@ -3,7 +3,7 @@
 
 import coloredlogs
 import logging
-import os.path, os.link
+import os
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
