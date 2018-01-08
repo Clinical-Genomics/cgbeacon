@@ -32,7 +32,6 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile="", custome
     # the number of original intervals in the bed panel
     # the number of variants mapping to these intervals
     panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-    print("Intervals in panel:",panel_filtered_results[1], "\nVars in intervals:", panel_filtered_results[2])
 
     ## Extracts variants from mini-VCF file object:
     # returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))

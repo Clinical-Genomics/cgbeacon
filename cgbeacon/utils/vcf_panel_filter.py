@@ -29,8 +29,9 @@ def vcf_intersect(vcf_path, bed_panel):
         gene_panel = BedTool(bed_panel) # gene panel doesn't need to be sorted by chrom and position.
 
         # Do the actual filtering and create a mini VCF with only the variants from the bed file's intervals:
-        intersections = vcf_file.intersect(gene_panel, header=True)
 
+        intersections = vcf_file.intersect(gene_panel, header=True)
+        LOG.info('Computing intersections between interval filter and VCF file..')
         panel_intervals =  gene_panel.count()
         intersected_vars = intersections.count()
 
