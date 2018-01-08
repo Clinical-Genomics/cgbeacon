@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from cyvcf2 import VCF
+import enlighten
 import sys
 import logging
 import coloredlogs
@@ -105,9 +106,15 @@ def get_variants(vcf, sample_list = None, qual_filter = 20.0):
 
         print("Extracting variants from VCF file...")
 
+        #Duplicate vcf object for counting the variants. This number is used to generate progress bar:
+        vcf2 = vcf
+        nvars = count_variants(vcf2)
+        pbar = enlighten.Counter(total=nvars, desc='', unit='ticks')
+
         # loop over each variant (VCF line)
         for v in vcf:
             varCounter += 1
+            pbar.update()
             if len(v.ALT) == 1: # there is just one alternate allele for samples in this VCF line
 
                 # loop over the samples GT, QUALs and Depths

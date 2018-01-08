@@ -6,7 +6,6 @@ cyvcf2
 
 # connection to db
 pymysql
-ConfigParser
 SQLAlchemy
 
 # Showing database insert ProgressBar
