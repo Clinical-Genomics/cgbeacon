@@ -183,7 +183,7 @@ pip install .
 </pre>
 
 #### Database settings
-Database settings are specified by the connection string passed to the program. This string should have this format.
+Database settings are specified by the connection string passed to the program. This string should have this format:
 <pre>
 mysql+pymysql://db_user:db_password@db_host:db_port/db_name
 </pre>
