@@ -43,7 +43,7 @@ def get_samples(vcf):
     return vcf.samples
 
 
-def get_variants(vcf, sample_list = None, qual_filter = 20.0):
+def get_variants(vcf, sample_list = None, raw_variants, qual_filter = 20.0):
 
     """Parses VCF file collecting all variants passing a QUAL filter for each sample of sample_list.
 
@@ -106,10 +106,7 @@ def get_variants(vcf, sample_list = None, qual_filter = 20.0):
 
         print("Extracting variants from VCF file...")
 
-        #Duplicate vcf object for counting the variants. This number is used to generate progress bar:
-        vcf2 = vcf
-        nvars = count_variants(vcf2)
-        pbar = enlighten.Counter(total=nvars, desc='', unit='ticks')
+        pbar = enlighten.Counter(total=raw_variants, desc='', unit='ticks')
 
         # loop over each variant (VCF line)
         for v in vcf:

@@ -74,7 +74,7 @@ def cli( dataset, vcf, db_connection, qual, ref, use_panel, outfile, customer, s
         vcfsamples = _compare_samples(vcfsamples, samples)
 
     ## returns a this tuple-> ( total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
-    vcf_results = get_variants(vcf_obj, vcfsamples, qual)
+    vcf_results = get_variants(vcf_obj, vcfsamples, raw_variants, qual)
 
     ## Print overall results of VCF file parsing to terminal
     vars_to_beacon = _print_results(vcf_results, qual)

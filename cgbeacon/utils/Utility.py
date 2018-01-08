@@ -38,7 +38,7 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile="", custome
     # returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
     ### beacon_vars is a disctionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
     ### discaded_vars is a dictionary with key --> sample and value --> number of discarded vars due to quality for that sample.
-    vcf_results = get_variants(panel_filtered_results[0], samples, qual)
+    vcf_results = get_variants(panel_filtered_results[0], samples, raw_variants, qual)
 
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
     beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
