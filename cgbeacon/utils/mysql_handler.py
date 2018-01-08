@@ -6,6 +6,7 @@ import coloredlogs
 import configparser
 import logging
 import os.path
+from pathlib import Path
 import enlighten
 import pymysql
 import sqlalchemy
@@ -15,12 +16,6 @@ import warnings
 
 db_settings = []
 LOG = logging.getLogger(__name__)
-
-def get_config():
-    """
-    Returns the mysql database configuration file path
-    """
-    return os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'settings', 'mysqlconfig.txt'))
 
 def use_mysqlalchemy(conn_url):
     """
@@ -34,38 +29,6 @@ def use_mysqlalchemy(conn_url):
     except Exception as e:
         LOG.critical('MysqlAlchemy was not able to use connection ulr:%s', e)
         sys.exit()
-
-# Connect using mysqlconfig file:
-def set_db_params():
-    """
-    Parses database config params
-    """
-    LOG.info('Parsing connection params')
-
-    config = configparser.ConfigParser()
-    config.read(get_config())
-
-    # set connection params
-    try:
-        db_settings.append( config['database']['mysql_user'] )
-        db_settings.append( config['database']['password'] )
-        db_settings.append( config['database']['host'] )
-        db_settings.append( config['database']['db'] )
-        db_settings.append( config['database']['port'] )
-
-    except Exception as e:
-        LOG.critical('There was a problem parsing the database settings file:%s', e)
-        sys.exit()
-
-    if len(db_settings) < 4 or '' in db_settings:
-        LOG.critical('One or more database settings are missing. Please check parameters file.')
-        sys.exit()
-
-    LOG.info('Connection params set.')
-
-    # Return connection url to be used in use_mysqlalchemy
-    connect_string = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(db_settings[0], db_settings[1], db_settings[2], db_settings[4], db_settings[3])
-    return connect_string
 
 def close_connection(conn):
     """

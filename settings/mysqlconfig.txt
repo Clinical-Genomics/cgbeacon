@@ -1,6 +1,0 @@
-[database]
-mysql_user=microaccounts_dev
-password=r783qjkldDsiu
-host=localhost
-db=elixir_beacon_testing
-port=3306

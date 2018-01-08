@@ -183,7 +183,11 @@ pip install .
 </pre>
 
 #### Database settings
-Database settings are specified in the file <b>settings/mysqlconfig.txt</b>. Consider to modify this file before testing the executable.
+Database settings are specified by the connection string passed to the program. This string should have this format.
+<pre>
+mysql+pymysql://db_user:db_password@db_host:db_port/db_name
+</pre>
+If not provided by the user the following connection string is passed to the program: mysql+pymysql://microaccounts_dev:r783qjkldDsiu@localhost:3306/elixir_beacon_testing
 
 #### Usage
 The program parses variants from a VCF file. Samples to be included in the Beacon database and variant quality threshold might be specified as optional parameters.
@@ -196,10 +200,11 @@ cgbeacon --vcf path_to_vcf_file --dataset dataset_name
 Optional parameters:
 
 <pre>
+--db_connection (mysql+pymysql://db_user:db_password@db_host:db_port/db_name)
 --qual [0-99] (variant quality threshold. default=20)
---ref chr_build (default is grch37)
+--ref chr_build (reference genome build, default is grch37)
 --use_panel path_to_gene_panel_bed_file (filter VCF file to use only intervals from a gene panel)
---pdf_report (specify if a pdf output with the results of submission to Beacon should be created, the report will be created under cgbeacon/temp)
+--outfile (name of the pdf output file with the results of submission to Beacon)
 --customer customer_id (a text string with the name of the customer/institution owning the samples in the VCF file)
 [list of samples to process separated by space] (Default is all samples found in the VCF file)
 </pre>

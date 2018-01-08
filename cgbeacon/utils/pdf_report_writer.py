@@ -28,9 +28,11 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
             Prints a PDF report with the results.
     """
     try:
-        # Create temporary pdf file.
-        temp_file = NamedTemporaryFile(suffix='.pdf')
-        pdf = canvas.Canvas(temp_file, pagesize=letter)
+        outpath = os.path.join(os.getcwd(), outfile)
+        print("outpath is:",outpath)
+
+        pdf = canvas.Canvas(outpath, pagesize=letter)
+
         pdf.setLineWidth(.3)
         pdf.setFont('Helvetica', 10)
 
@@ -40,11 +42,10 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
 
         #Set logo:
         try:
-            logo = ImageReader(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', '..', 'img', 'SLL_logo.png')))
-        #    logo = ImageReader('https://github.com/Clinical-Genomics/cgbeacon/blob/master/img/SLL_logo.png')
+            logo = ImageReader('https://raw.githubusercontent.com/Clinical-Genomics/cgbeacon/master/img/SLL_logo.png')
             pdf.drawImage(logo, 20, 700, mask='auto', width=7*cm, height=2*cm)
-        except:
-            print("Couldn't fetch logo from the web. Printing PDF without it!")
+        except Exception as e:
+            print("Couldn't fetch logo from the web. Printing PDF without it! Errror:",e)
         pdf.drawString(38,695,'Science for Life Laboratory')
         pdf.drawString(38,680,'Tomtebodavägen 23A 17165 Solna, Sweden.')
         pdf.drawString(38,665,'Clinical Genomics, Stockholm.')
@@ -101,18 +102,12 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         xcoord -= 20
         pdf.drawString(38, xcoord, "Number of variants in Beacon AFTER submission: " + str(database_insert_results[0]+database_insert_results[1]))
 
-
         pdf.drawString(500, 50, "page 1 of 1")
-
         pdf.save()
-        os.link(temp_file.name, outfile)
-        os.remove(temp_file.name)
 
 
     except Exception as e:
-
-        LOG = logging.getLogger(__name__)
-        LOG.error('Unexpected error:%s',e)
+        print('Unexpected error:',e)
 
 if __name__ == '__main__':
 

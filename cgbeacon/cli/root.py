@@ -19,12 +19,12 @@ LOG = logging.getLogger(__name__)
 @click.command()
 @click.option('--dataset', type=click.STRING, nargs=1, required=True, help='A string representing the dataset name, don\'t use spaces')
 @click.option('--vcf', type=click.Path(exists=True), nargs=1, required=True, help='A VCF file')
+@click.option('--db_connection', type=click.STRING, nargs=1, required=False, help='database connection string: mysql+pymysql://db_user:db_password@db_host:db_port/db_name', default='mysql+pymysql://microaccounts_dev:r783qjkldDsiu@localhost:3306/elixir_beacon_testing')
 @click.option('--qual', type=click.FLOAT, nargs=1, default=20, help='Variant quality threshold (default>=20)')
 @click.option('--ref', type=click.STRING, nargs=1, default='grch37', help='Chromosome build (default=grch37)')
 @click.option('--use_panel', type=click.Path(exists=True), nargs=1, required=False, help='Path to bed file to filter VCF file')
 @click.option('--outfile', type=click.Path(exists=False), required=False, help='Outfile to write pdf report to')
 @click.option('--customer', type=click.STRING, nargs=1, required=False, help='Used for generating the pdf report')
-@click.option('--db_connection', type=click.STRING, nargs=1, required=False, help='database connection string: mysql+pymysql://db_user:db_password@db_host:db_port/db_name')
 @click.argument('samples', nargs=-1, type=click.STRING, default = None, required=False)
 
 def cli( dataset, vcf, db_connection, qual, ref, use_panel, outfile, customer, samples):
