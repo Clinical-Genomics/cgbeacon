@@ -225,6 +225,4 @@ Your query interface should be now available from a web browser page at the foll
 http://127.0.0.1:5000/
 </pre>
 
-The app is designed to connect via SQL Alchemy to a default MySQL database present on the same machine as the app, but you can customize the connections parameter by modifying the parameter "SQLALCHEMY_DATABASE_URI" present in the file:
-
-instance/config.cfg
+The app is designed to connect via SQL Alchemy to a default MySQL database present on the same machine as the app, but you can customize the connections parameter by modifying the parameter "SQLALCHEMY_DATABASE_URI" in the config file present in the "instance" folder.
