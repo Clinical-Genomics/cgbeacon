@@ -15,6 +15,7 @@ Instructions and files to set up an Elixir-based beacon connected to a MySQL dat
     + [Installation](#installation)
     + [Database settings](#database-settings)
     + [Usage](#usage)
+- [User interface](#user-interface-)
 
 ## What is a Beacon?
 Beacons are web-based discovery services for genetic variants. They are useful to know if the dataset present at any institution connected to the beacon network contains a given allele (or genetic variant). Beacons are an efficient way to share valuable genetic information without overly expose genomic data, due to privacy or security issues.
@@ -208,3 +209,21 @@ Optional parameters:
 --customer customer_id (a text string with the name of the customer/institution owning the samples in the VCF file)
 [list of samples to process separated by space] (Default is all samples found in the VCF file)
 </pre>
+
+## User interface
+A simple front-end query Flask app to the Clinical Genomics Beacon is available under the [UI](UI folder). Download the compressed archive and uncompress it in the folder where you want to run the app from.
+To run it, change directory to the cgbeacon_UI folder and launch it with python 3:
+
+<pre>
+cd cgbeacon_UI
+python3 run.py
+</pre>
+
+Your query interface should be now available from a web browser page at the following address:
+<pre>
+http://127.0.0.1:5000/
+</pre>
+
+The app is designed to connect via SQL Alchemy to a default MySQL database present on the same machine as the app, but you can customize the connections parameter by modifying the parameter "SQLALCHEMY_DATABASE_URI" present in the file:
+
+instance/config.cfg
