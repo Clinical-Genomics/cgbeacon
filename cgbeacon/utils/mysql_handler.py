@@ -107,7 +107,7 @@ def update_dataset_vars(conn, dataset, n_vars):
     Updates the number of variants for a given dataset
     """
     try:
-        sql = "pdate beacon_dataset_table set size=%s where id=%s;"
+        sql = "update beacon_dataset_table set size=%s where id=%s;"
         result = conn.execute(sql, n_vars, dataset)
         return result.rowcount
 
@@ -124,7 +124,7 @@ def update_datasets(conn, dataset, build='grch37'):
 
     #update dataset table:
     try:
-        sql = sql='insert into beacon_dataset_table (id, description, access_type, reference_genome, size) VALUES (%s, %s, %s, %s, %s);'
+        sql = 'insert into beacon_dataset_table (id, description, access_type, reference_genome, size) VALUES (%s, %s, %s, %s, %s);'
         result = conn.execute(sql, dataset, 'Sample variants','PUBLIC', build, n_variants)
         updates += result.rowcount
 
