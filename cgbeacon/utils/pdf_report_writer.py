@@ -86,10 +86,12 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         pdf.line(38,xcoord,575,xcoord)
         xcoord -= 5
         for keys, values in VCF_parsing_results[1].items():
-            xcoord -= 10
-            pdf.drawString(38, xcoord, str(keys))
-            pdf.drawString(250, xcoord, str(len(values)))
-            pdf.drawString(400, xcoord, str(VCF_parsing_results[2][keys]))
+
+            if len(values)>0:
+                xcoord -= 10
+                pdf.drawString(38, xcoord, str(keys))
+                pdf.drawString(250, xcoord, str(len(values)))
+                pdf.drawString(400, xcoord, str(VCF_parsing_results[2][keys]))
 
         xcoord -=10
         pdf.line(38,xcoord,575,xcoord)
