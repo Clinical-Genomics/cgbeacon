@@ -74,7 +74,9 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                     sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
                     result = conn.execute(sql, dataset, val[0], val[1], val[2])
                     insert_counter += result.rowcount
-
+                except IntegrityError as e:
+                    if "Duplicate entry" in e.message():
+                        LOG.warn('Variant already in beacon')
                 except:
                     LOG.error('Unexpected error:%s',sys.exc_info()[0])
 
