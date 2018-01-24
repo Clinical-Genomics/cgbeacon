@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from cyvcf2 import VCF
+
 from cgbeacon.utils.mysql_handler import bare_variants_uploader
 from cgbeacon.utils.vcf_panel_filter import vcf_intersect
 from cgbeacon.utils.vcfparser import get_variants, count_variants
@@ -31,7 +33,14 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile="", custome
     # a mini-VCF file object
     # the number of original intervals in the bed panel
     # the number of variants mapping to these intervals
-    panel_filtered_results = vcf_intersect(vcf_path, panel_path)
+
+    # If the vcf should be filtered by a gene panel bed file:
+    panel_filtered_results = None
+    if panel_path:
+        panel_filtered_results = vcf_intersect(vcf_path, panel_path)
+    else:
+        vcf_obj = VCF(vcf_path)
+        panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
 
     ## Extracts variants from mini-VCF file object:
     # returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
