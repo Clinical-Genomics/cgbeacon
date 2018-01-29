@@ -8,7 +8,7 @@ from cgbeacon.utils.vcf_panel_filter import vcf_intersect
 from cgbeacon.utils.vcfparser import get_variants, count_variants
 from cgbeacon.utils.pdf_report_writer import create_report
 
-def beacon_upload(connection, vcf_path, panel_path, dataset, outfile="", customer="", samples=None, qual=20, genome_reference="grch37"):
+def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, customer="", samples=None, qual=20, genome_reference="grch37"):
     """ This object is the backbone of the beacon importer.
 
         Args:

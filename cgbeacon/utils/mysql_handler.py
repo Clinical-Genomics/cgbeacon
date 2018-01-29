@@ -129,13 +129,10 @@ def update_datasets(conn, dataset, build='grch37'):
         updates += result.rowcount
 
     # Handle the exception that occurrs when trying to insert the same dataset twice
-    except pymysql.err.IntegrityError as e:
-
-        # if the dataset exists then just update the number of its vars:
-        if 'Duplicate entry' in str(e) :
-            LOG.info('It looks like dataset %s exists already. Updating number of variants for this dataset.',dataset)
+    except IntegrityError as e:
+        if "Duplicate entry" in e.message():
+            LOG.warn('Dataset already in beacon')
             updates = update_dataset_vars(conn, dataset, n_variants)
-
     except:
         LOG.error('Unexpected error:%s',sys.exc_info()[0])
 
