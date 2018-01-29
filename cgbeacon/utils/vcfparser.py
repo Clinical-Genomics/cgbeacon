@@ -30,6 +30,19 @@ def count_variants(vcf):
 
     return nr_variants
 
+def make_vcf(path_to_vcf_file):
+    """ Creates a vcf file object from a vcf file path
+
+    Args:
+        A VCF file path
+
+    Returns:
+        A VCF file object
+    """
+    vcf = VCF(path_to_vcf_file)
+    return vcf
+
+
 def get_samples(vcf):
     """ Get the names of the samples contained in a VCF file
 
@@ -39,6 +52,14 @@ def get_samples(vcf):
     Returns:
         A list of samples contained in the VCF
     """
+
+    if type(vcf) == str:
+        try:
+            vcf = make_vcf(vcf)
+        except:
+            LOG.critical('Please provide a valid path to a VCF file!')
+            sys.exit()
+
     return vcf.samples
 
 
