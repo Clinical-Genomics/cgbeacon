@@ -56,8 +56,8 @@ def get_samples(vcf):
     if type(vcf) == str:
         try:
             vcf = make_vcf(vcf)
-        except:
-            LOG.critical('Please provide a valid path to a VCF file!')
+        except Exception as e:
+            LOG.critical('An error occurred while creating a VCF object from file path:%s', e)
             sys.exit()
 
     return vcf.samples
