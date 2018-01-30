@@ -73,8 +73,8 @@ def remove_variants(conn, list_of_var_tuples):
 
             pbar.update()
 
-        except Exception as e:
-            print('Unexpected error:',e)
+        except Exception as ex:
+            print('Unexpected error:',ex)
 
     return delete_counter
 
