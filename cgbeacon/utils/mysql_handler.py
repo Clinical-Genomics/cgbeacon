@@ -58,7 +58,7 @@ def remove_variants(conn, list_of_var_tuples):
     LOG.info('Deleting variants from database..')
 
     #loop over each sample(key) of the dictionary:
-    click.echo("variants to process:%s" % len(list_of_var_tuples))
+    click.echo("variants to remove:%s (it might take some time!)" % len(list_of_var_tuples))
     pbar = enlighten.Counter(total=len(list_of_var_tuples), desc='', unit='ticks')
 
     for var_tuple in list_of_var_tuples:
@@ -108,7 +108,7 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                         result = conn.execute(sql, dataset, val[0], val[1], val[2])
                         insert_counter += result.rowcount
 
-                except ssqlalchemy.exc.IntegrityError as e:
+                except sqlalchemy.exc.IntegrityError as e:
                     LOG.warn('Variant already in beacon')
                 except:
                     LOG.error('Unexpected error:%s',sys.exc_info()[0])
