@@ -50,6 +50,26 @@ def get_variant_number(conn):
         conn.close()
         return
 
+def remove_variants(conn, list_of_var_tuples):
+    """
+    Deletes variants from beacon
+    """
+    delete_counter=0
+    LOG.info('Deleting variants from database..')
+
+    #loop over each sample(key) of the dictionary:
+    click.echo("variants to process:%s" % len(list_of_var_tuples))
+    pbar = enlighten.Counter(total=len(list_of_var_tuples), desc='', unit='ticks')
+
+    for var_tuple in list_of_var_tuples:
+        pbar.update()
+
+
+    return "jskdjksjdksj"
+
+
+
+
 def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
     """
     Inserts variants into beacon
@@ -71,12 +91,17 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                 warnings.simplefilter('ignore', pymysql.Warning)
 
                 try:
-                    sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
-                    result = conn.execute(sql, dataset, val[0], val[1], val[2])
+                    sql="update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.dataset_id=%s;"
+                    #sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
+                    result = conn.execute(sql, val[1], val[0], val[2], dataset)
                     insert_counter += result.rowcount
-                except IntegrityError as e:
-                    if "Duplicate entry" in e.message():
-                        LOG.warn('Variant already in beacon')
+                    if result.rowcount == 0: #var was not present, must be inserted:
+                        sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence) values (%s,%s,%s,%s,1);"
+                        result = conn.execute(sql, dataset, val[0], val[1], val[2])
+                        insert_counter += result.rowcount
+
+                except ssqlalchemy.exc.IntegrityError as e:
+                    LOG.warn('Variant already in beacon')
                 except:
                     LOG.error('Unexpected error:%s',sys.exc_info()[0])
 
@@ -129,10 +154,9 @@ def update_datasets(conn, dataset, build='grch37'):
         updates += result.rowcount
 
     # Handle the exception that occurrs when trying to insert the same dataset twice
-    except IntegrityError as e:
-        if "Duplicate entry" in e.message():
-            LOG.warn('Dataset already in beacon')
-            updates = update_dataset_vars(conn, dataset, n_variants)
+    except sqlalchemy.exc.IntegrityError as e:
+        LOG.warn('Dataset already in beacon')
+        updates = update_dataset_vars(conn, dataset, n_variants)
     except:
         LOG.error('Unexpected error:%s',sys.exc_info()[0])
 
