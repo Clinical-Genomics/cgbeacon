@@ -108,10 +108,8 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                         result = conn.execute(sql, dataset, val[0], val[1], val[2])
                         insert_counter += result.rowcount
 
-                except sqlalchemy.exc.IntegrityError as e:
-                    LOG.warn('Variant already in beacon')
-                except:
-                    LOG.error('Unexpected error:%s', e)
+                except Exception as ex:
+                    LOG.warn('Unexpected error:%s', ex)
 
                 pbar.update()
 
