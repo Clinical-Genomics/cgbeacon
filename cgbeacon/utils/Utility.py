@@ -8,6 +8,51 @@ from cgbeacon.utils.vcf_panel_filter import vcf_intersect
 from cgbeacon.utils.vcfparser import get_variants, count_variants
 from cgbeacon.utils.pdf_report_writer import create_report
 
+def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
+    """ This subroutine remove variants from beacon.
+        Args:
+        1) Sample id (same as in the VCF file)
+        2) Path to the VCF file
+        3) Path to gene panel (or coordinates) to use to filter VCF file
+        4) Filter quality used for the upload
+
+        Returns: number of new variants removed from the beacon for this sample.
+    """
+    vcf_obj = None
+
+    try:
+        raw_variants = count_variants(vcf_path)
+        # Filter original VCF file for regions in gene panels:
+        if panel_path:
+            panel_filtered_results = vcf_intersect(vcf_path, panel_path)
+            vcf_obj = panel_filtered_results[0]
+        else: #No filtering by panel:
+            vcf_obj = VCF(vcf_path)
+
+        # get variants to remove from VCF file:
+        vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
+
+        print("VCF results:",vcf_results)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, customer="", samples=None, qual=20, genome_reference="grch37"):
     """ This object is the backbone of the beacon importer.
 
@@ -45,7 +90,7 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     ## Extracts variants from mini-VCF file object:
     # returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
     ### beacon_vars is a disctionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
-    ### discaded_vars is a dictionary with key --> sample and value --> number of discarded vars due to quality for that sample.
+    ### discarded_vars is a dictionary with key --> sample and value --> number of discarded vars due to quality for that sample.
     vcf_results = get_variants(panel_filtered_results[0], raw_variants, samples, qual)
 
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
