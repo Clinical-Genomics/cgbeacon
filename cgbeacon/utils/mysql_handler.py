@@ -62,13 +62,21 @@ def remove_variants(conn, list_of_var_tuples):
     pbar = enlighten.Counter(total=len(list_of_var_tuples), desc='', unit='ticks')
 
     for var_tuple in list_of_var_tuples:
-        pbar.update()
+        try:
+            # Remove 1 from the occurrence field if this is not the last occurrence
+            sql = "update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.occurrence > 1;"
+            result = conn.execute(sql, val[1], val[0], val[2])
+            delete_counter += result.rowcount
+            if result.rowcount == 0: # If this is the last occurrence of this variant, remove the whole row.
+                sql = "delete from beacon_data_table where position=%s and chromosome=%s and alternate=%s"
+                result = conn.execute(sql, val[1], val[0], val[2])
 
+            pbar.update()
 
-    return "jskdjksjdksj"
+        except Exception as e:
+            print('Unexpected error:',e)
 
-
-
+    return delete_counter
 
 def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
     """
