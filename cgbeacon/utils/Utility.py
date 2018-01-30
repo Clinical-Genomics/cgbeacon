@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from cyvcf2 import VCF
 
 from cgbeacon.utils.mysql_handler import bare_variants_uploader
@@ -31,7 +30,7 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     # get variants to remove from VCF file:
     vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
 
-    print("VCF results:",vcf_results)
+    return vcf_results
 
 
 
