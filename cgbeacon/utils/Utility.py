@@ -20,36 +20,18 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     """
     vcf_obj = None
 
-    try:
-        raw_variants = count_variants(vcf_path)
-        # Filter original VCF file for regions in gene panels:
-        if panel_path:
-            panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-            vcf_obj = panel_filtered_results[0]
-        else: #No filtering by panel:
-            vcf_obj = VCF(vcf_path)
+    raw_variants = count_variants(vcf_path)
+    # Filter original VCF file for regions in gene panels:
+    if panel_path:
+        panel_filtered_results = vcf_intersect(vcf_path, panel_path)
+        vcf_obj = panel_filtered_results[0]
+    else: #No filtering by panel:
+        vcf_obj = VCF(vcf_path)
 
-        # get variants to remove from VCF file:
-        vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
+    # get variants to remove from VCF file:
+    vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
 
-        print("VCF results:",vcf_results)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    print("VCF results:",vcf_results)
 
 
 
