@@ -3,6 +3,7 @@ coloredlogs
 
 # parsing VCFs
 cyvcf2
+pysam
 
 # connection to db
 pymysql

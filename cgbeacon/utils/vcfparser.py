@@ -148,7 +148,9 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
                         if qual >= qual_filter and not gt=="2":
 
                             # append a tuple with (chr, start, alt) with this variant to the list of variants (tuples) of this sample:
-                            samplevars[ sample_list[sampleCounter] ].append( (v.CHROM, v.start, v.ALT[0] ) )
+                            var_tuple = (v.CHROM, v.start, v.ALT[0] )
+                            if not var_tuple in samplevars[ sample_list[sampleCounter] ]:
+                                samplevars[ sample_list[sampleCounter] ].append(var_tuple)
 
                         else:
                             # It's discarded, so increment counter for dicarded vars for this sample
@@ -174,7 +176,9 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
                             #store it, but only if QUAL > qual and the position is covered
                             if qual >= qual_filter and not gt=="2":
                                 # append a tuple with (chr, start, alt) with this variant to the list of variants (tuples) of this sample:
-                                samplevars[ sample_list[sampleCounter] ].append( (v.CHROM, v.start, v.ALT[i] ) )
+                                var_tuple = (v.CHROM, v.start, v.ALT[i])
+                                if not var_tuple in samplevars[ sample_list[sampleCounter] ]:
+                                    samplevars[ sample_list[sampleCounter] ].append( var_tuple )
 
                             sampleCounter += 1
                         gt_counter +=1
