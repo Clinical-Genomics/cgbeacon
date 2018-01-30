@@ -70,6 +70,7 @@ def remove_variants(conn, list_of_var_tuples):
             if result.rowcount == 0: # If this is the last occurrence of this variant, remove the whole row.
                 sql = "delete from beacon_data_table where position=%s and chromosome=%s and alternate=%s"
                 result = conn.execute(sql, var_tuple[1], var_tuple[0], var_tuple[2])
+                delete_counter += result.rowcount
 
             pbar.update()
 
