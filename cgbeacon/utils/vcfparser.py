@@ -3,8 +3,9 @@
 
 from cyvcf2 import VCF
 import sys
-import logging
 import coloredlogs
+import enlighten
+import logging
 
 LOG = logging.getLogger(__name__)
 
@@ -125,11 +126,13 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
         discarded = 0
 
         print("Extracting variants from VCF file. It might take a while..")
+        pbar = enlighten.Counter(total=raw_variants, desc='', unit='ticks')
 
         # loop over each variant (VCF line)
         for v in vcf:
             varCounter += 1
-            print(varCounter)
+            pbar.update()
+            
             if len(v.ALT) == 1: # there is just one alternate allele for samples in this VCF line
 
                 # loop over the samples GT, QUALs and Depths
