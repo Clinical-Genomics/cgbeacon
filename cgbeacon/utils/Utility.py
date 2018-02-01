@@ -65,17 +65,22 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
 
     # If the vcf should be filtered by a gene panel bed file:
     panel_filtered_results = None
+    vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
+
+        ## Extracts variants from mini-VCF file object:
+        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[2], samples, qual)
+
     else:
         vcf_obj = VCF(vcf_path)
         panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
+        vcf_results = get_variants(panel_filtered_results[0], raw_variants, samples, qual)
 
-    ## Extracts variants from mini-VCF file object:
-    # returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
+    # get_variants() returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
     ### beacon_vars is a disctionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
     ### discarded_vars is a dictionary with key --> sample and value --> number of discarded vars due to quality for that sample.
-    vcf_results = get_variants(panel_filtered_results[0], raw_variants, samples, qual)
+
 
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
     beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
