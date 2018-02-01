@@ -4,7 +4,6 @@
 import logging
 import coloredlogs
 import os
-import tempfile
 from tempfile import NamedTemporaryFile
 from cyvcf2 import VCF
 from pybedtools import BedTool
