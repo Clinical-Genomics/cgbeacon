@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import copy
 from cyvcf2 import VCF
 from cgbeacon.utils.mysql_handler import bare_variants_uploader, remove_variants
 from cgbeacon.utils.vcf_panel_filter import vcf_intersect
@@ -24,12 +23,13 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     # Filter original VCF file for regions in gene panels:
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
+        temp_vcf = panel_filtered_results[0]
+        vcf_results = get_variants(panel_filtered_results[0], count_variants(temp_vcf), samples, qual)
 
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
         panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
-
-    vcf_results = get_variants(panel_filtered_results[0], raw_variants, [sample], qual)
+        vcf_results = get_variants(panel_filtered_results[0], raw_variants, [sample], qual)
 
     #Do the actual variant removal:
     removed = remove_variants(connection, vcf_results[1][sample])
