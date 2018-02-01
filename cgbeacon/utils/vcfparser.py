@@ -4,7 +4,6 @@
 from cyvcf2 import VCF
 import sys
 import coloredlogs
-import enlighten
 import logging
 
 LOG = logging.getLogger(__name__)
@@ -126,7 +125,6 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
         discarded = 0
 
         print("Extracting variants from VCF file. It might take a while..")
-        pbar = enlighten.Counter(total=raw_variants, desc='', unit='ticks')
 
         # loop over each variant (VCF line)
         for v in vcf:
@@ -182,7 +180,6 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
 
                             sampleCounter += 1
                         gt_counter +=1
-            pbar.update()
 
         return (varCounter, samplevars, sampleDiscards)
 

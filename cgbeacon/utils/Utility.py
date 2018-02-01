@@ -20,15 +20,16 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
 
     print("Counting variants in raw VCF file..")
     raw_variants = count_variants(vcf_path)
-    vcf_results = None
+    panel_filtered_results = None
     # Filter original VCF file for regions in gene panels:
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], count_variants(copy.copy(panel_filtered_results[0])), [sample], qual)
 
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
-        vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
+        panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
+
+    vcf_results = get_variants(panel_filtered_results, raw_variants, [sample], qual)
 
     #Do the actual variant removal:
     removed = remove_variants(connection, vcf_results[1][sample])
@@ -65,17 +66,15 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        ## Extracts variants from mini-VCF file object:
-        vcf_results = get_variants(panel_filtered_results[0], count_variants(copy.copy(panel_filtered_results[0])), samples, qual)
 
     else:
         vcf_obj = VCF(vcf_path)
         panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
-        vcf_results = get_variants(panel_filtered_results[0], raw_variants, samples, qual)
 
     # get_variants() returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
     ### beacon_vars is a disctionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
     ### discarded_vars is a dictionary with key --> sample and value --> number of discarded vars due to quality for that sample.
+    vcf_results = get_variants(panel_filtered_results[0], raw_variants, samples, qual)
 
 
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
