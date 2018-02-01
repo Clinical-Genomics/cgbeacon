@@ -78,7 +78,7 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
 
 
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
-    #######beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
+    beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
 
     # Print the pdf report with the variant upload results:
     if outfile:
