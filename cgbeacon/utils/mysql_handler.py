@@ -58,8 +58,8 @@ def remove_variants(conn, list_of_var_tuples):
     LOG.info('Deleting variants from database..')
 
     #loop over each sample(key) of the dictionary:
-    #click.echo("variants to remove:%s (it might take some time!)" % len(list_of_var_tuples))
-    #pbar = enlighten.Counter(total=len(list_of_var_tuples), desc='', unit='ticks')
+    click.echo("variants to remove:%s (it might take some time!)" % len(list_of_var_tuples))
+    pbar = enlighten.Counter(total=len(list_of_var_tuples), desc='', unit='ticks')
 
     for var_tuple in list_of_var_tuples:
         try:
