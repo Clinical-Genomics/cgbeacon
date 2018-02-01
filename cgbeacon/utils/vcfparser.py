@@ -161,9 +161,6 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
 
                         sampleCounter +=1
                     gt_counter +=1
-            pbar.update()
-
-
             else: # multiple alleles at this position, take care of it!
 
                 # loop over the multiple alternate alleles:
@@ -186,6 +183,7 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
 
                             sampleCounter += 1
                         gt_counter +=1
+            pbar.update()
 
         return (varCounter, samplevars, sampleDiscards)
 
