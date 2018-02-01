@@ -9,27 +9,26 @@ from cgbeacon.utils.pdf_report_writer import create_report
 def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     """ This subroutine remove variants from beacon.
         Args:
-        1) Connection
-        2) Sample id (same as in the VCF file)
-        3) Path to the VCF file
-        4) Path to gene panel (or coordinates) to use to filter VCF file
-        5) Filter quality used for the upload
+        1) Sample id (same as in the VCF file)
+        2) Path to the VCF file
+        3) Path to gene panel (or coordinates) to use to filter VCF file
+        4) Filter quality used for the upload
 
         Returns: number of new variants removed from the beacon for this sample.
     """
 
     print("Counting variants in raw VCF file..")
     raw_variants = count_variants(vcf_path)
+    vcf_results = None
     panel_filtered_results = None
     # Filter original VCF file for regions in gene panels:
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].gen_variants, [sample], qual)
-
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
         panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
-        vcf_results = get_variants(panel_filtered_results[0], raw_variants, [sample], qual)
+
+    vcf_results = get_variants(panel_filtered_results[0], raw_variants, [sample], qual)
 
     #Do the actual variant removal:
     removed = remove_variants(connection, vcf_results[1][sample])
@@ -66,19 +65,20 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].gen_variants, samples, qual)
+        ## Extracts variants from mini-VCF file object:
 
     else:
         vcf_obj = VCF(vcf_path)
         panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
-        vcf_results = get_variants(panel_filtered_results[0], raw_variants, samples, qual)
+
     # get_variants() returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
     ### beacon_vars is a disctionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
     ### discarded_vars is a dictionary with key --> sample and value --> number of discarded vars due to quality for that sample.
+    vcf_results = get_variants(panel_filtered_results[0], raw_variants, samples, qual)
 
 
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
-    beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
+    #######beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
 
     # Print the pdf report with the variant upload results:
     if outfile:
