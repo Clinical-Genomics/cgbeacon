@@ -23,7 +23,7 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     # Filter original VCF file for regions in gene panels:
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], count_variants(panel_filtered_results[0].gen_variants), samples, qual)
+        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].gen_variants, samples, qual)
 
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
@@ -65,7 +65,7 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], count_variants(panel_filtered_results[0].gen_variants), samples, qual)
+        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].gen_variants, samples, qual)
 
     else:
         vcf_obj = VCF(vcf_path)
