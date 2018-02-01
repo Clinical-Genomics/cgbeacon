@@ -131,7 +131,6 @@ def get_variants(vcf, raw_variants, sample_list = None, qual_filter = 20.0):
         # loop over each variant (VCF line)
         for v in vcf:
             varCounter += 1
-            print(varCounter)
             if len(v.ALT) == 1: # there is just one alternate allele for samples in this VCF line
 
                 # loop over the samples GT, QUALs and Depths
