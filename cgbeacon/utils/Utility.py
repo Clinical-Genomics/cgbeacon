@@ -66,7 +66,8 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], count_variants(copy.copy(panel_filtered_results[0])), samples, qual)
+        temp_vcf = panel_filtered_results[0]
+        vcf_results = get_variants(panel_filtered_results[0], count_variants(temp_vcf), samples, qual)
 
     else:
         vcf_obj = VCF(vcf_path)
