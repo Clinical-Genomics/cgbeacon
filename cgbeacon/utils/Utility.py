@@ -17,7 +17,6 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
 
         Returns: number of new variants removed from the beacon for this sample.
     """
-    vcf_obj = None
 
     print("Counting variants in raw VCF file..")
     raw_variants = count_variants(vcf_path)
@@ -29,14 +28,11 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
 
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
-         vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
+        vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
 
     #Do the actual variant removal:
     removed = remove_variants(connection, vcf_results[1][sample])
-
     return removed
-
-
 
 def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, customer="", samples=None, qual=20, genome_reference="grch37"):
     """ This object is the backbone of the beacon importer.
