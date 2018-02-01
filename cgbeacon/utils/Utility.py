@@ -21,14 +21,15 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
 
     print("Counting variants in raw VCF file..")
     raw_variants = count_variants(vcf_path)
+    vcf_results = None
     # Filter original VCF file for regions in gene panels:
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_obj = panel_filtered_results[0]
+        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[2], [sample], qual)
+
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
-    # get variants to remove from VCF file:
-    vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
+         vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
 
     #Do the actual variant removal:
     removed = remove_variants(connection, vcf_results[1][sample])
@@ -68,9 +69,6 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-
-        print("Temp test:",panel_filtered_results)
-
         ## Extracts variants from mini-VCF file object:
         vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[2], samples, qual)
 
@@ -94,5 +92,5 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
         create_report(title, outfile, panel_path, raw_variants, qual, vcf_results, beacon_update_result, customer)
 
     # Return the number of new vars uploaded in beacon
-    #print("new vars in beacon:", beacon_update_result[1])
-    #return beacon_update_result[1]
+    print("new vars in beacon:", beacon_update_result[1])
+    return beacon_update_result[1]
