@@ -9,10 +9,11 @@ from cgbeacon.utils.pdf_report_writer import create_report
 def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     """ This subroutine remove variants from beacon.
         Args:
-        1) Sample id (same as in the VCF file)
-        2) Path to the VCF file
-        3) Path to gene panel (or coordinates) to use to filter VCF file
-        4) Filter quality used for the upload
+        1) Connection
+        2) Sample id (same as in the VCF file)
+        3) Path to the VCF file
+        4) Path to gene panel (or coordinates) to use to filter VCF file
+        5) Filter quality used for the upload
 
         Returns: number of new variants removed from the beacon for this sample.
     """
@@ -23,7 +24,7 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     # Filter original VCF file for regions in gene panels:
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].gen_variants, samples, qual)
+        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].gen_variants, [sample], qual)
 
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
