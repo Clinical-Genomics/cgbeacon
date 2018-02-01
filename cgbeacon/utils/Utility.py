@@ -29,7 +29,7 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
         vcf_obj = VCF(vcf_path)
         panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
 
-    vcf_results = get_variants(panel_filtered_results, raw_variants, [sample], qual)
+    vcf_results = get_variants(panel_filtered_results[0], raw_variants, [sample], qual)
 
     #Do the actual variant removal:
     removed = remove_variants(connection, vcf_results[1][sample])
