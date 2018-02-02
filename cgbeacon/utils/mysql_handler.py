@@ -104,20 +104,20 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore', pymysql.Warning)
 
-                try:
-                    unique_key = dataset+"_"+val[0]+"_"+val[1]+"_"+val[2]
-                    sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence, chr_pos_alt_dset) values (%s, %s, %s, %s, %s, %s) on duplicate key update occurrence = occurrence + 1"
-                    #sql="update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.dataset_id=%s;"
-                    #sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
-                    result = conn.execute(sql, dataset, val[0], str(val[1]), val[2], 1, unique_key)
-                    #insert_counter += result.rowcount
-                    #if result.rowcount == 0: #var was not present, must be inserted:
-                    #    sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence) values (%s,%s,%s,%s,1);"
-                    #    result = conn.execute(sql, dataset, val[0], val[1], val[2])
-                    #    insert_counter += result.rowcount
+                #try:
+                unique_key = dataset+"_"+int(val[0])+"_"+val[1]+"_"+val[2]
+                sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence, chr_pos_alt_dset) values (%s, %s, %s, %s, %s, %s) on duplicate key update occurrence = occurrence + 1"
+                #sql="update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.dataset_id=%s;"
+                #sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
+                result = conn.execute(sql, dataset, val[0], str(val[1]), val[2], 1, unique_key)
+                #insert_counter += result.rowcount
+                #if result.rowcount == 0: #var was not present, must be inserted:
+                #    sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence) values (%s,%s,%s,%s,1);"
+                #    result = conn.execute(sql, dataset, val[0], val[1], val[2])
+                #    insert_counter += result.rowcount
 
-                except Exception as ex:
-                    LOG.warn('Unexpected error:%s', ex)
+                #except Exception as ex:
+                #    LOG.warn('Unexpected error:%s', ex)
 
                 pbar.update()
 
