@@ -101,6 +101,8 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
         #loop over each variant tuple for the sample
         for val in values:
 
+            print("val:",val)
+
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore', pymysql.Warning)
 
