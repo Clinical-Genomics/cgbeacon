@@ -50,7 +50,7 @@ def get_variant_number(conn):
         conn.close()
         return
 
-def remove_variants(conn, list_of_var_tuples):
+def remove_variants(conn, dataset, list_of_var_tuples):
     """
     Deletes variants from beacon
     """

@@ -30,7 +30,7 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
         vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
 
     #Do the actual variant removal:
-    removed = remove_variants(connection, vcf_results[1][sample])
+    removed = remove_variants(connection, 'clinicalgenomics', vcf_results[1][sample])
     return removed
 
 def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, customer="", samples=None, qual=20, genome_reference="grch37"):
