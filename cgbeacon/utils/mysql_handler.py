@@ -65,8 +65,8 @@ def remove_variants(conn, dataset, list_of_var_tuples):
         try:
             unique_key = dataset+"_"+str(var_tuple[0])+"_"+str(var_tuple[1])+"_"+var_tuple[2]
             # Remove 1 from the occurrence field if this is not the last occurrence
-            sql = "update beacon_data_table set occurrence = occurrence -1 where chr_pos_alt_dset='"+unique_key+"'"
-            result = conn.execute(sql, var_tuple[1], var_tuple[0], var_tuple[2])
+            sql = "update beacon_data_table set occurrence = occurrence -1 where chr_pos_alt_dset=%s"
+            result = conn.execute(sql, unique_key)
             delete_counter += result.rowcount
             pbar.update()
 
