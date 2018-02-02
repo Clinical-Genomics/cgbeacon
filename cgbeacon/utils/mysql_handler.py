@@ -105,7 +105,7 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                 warnings.simplefilter('ignore', pymysql.Warning)
 
                 #try:
-                unique_key = dataset+"_"+int(val[0])+"_"+val[1]+"_"+val[2]
+                unique_key = dataset+"_"+int(val[0])+"_"+int(val[1])+"_"+val[2]
                 sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence, chr_pos_alt_dset) values (%s, %s, %s, %s, %s, %s) on duplicate key update occurrence = occurrence + 1"
                 #sql="update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.dataset_id=%s;"
                 #sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
