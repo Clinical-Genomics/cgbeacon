@@ -16,17 +16,17 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
 
         Returns: number of new variants removed from the beacon for this sample.
     """
-
+    raw_variants = count_variants(vcf_path)
     vcf_results = None
     panel_filtered_results = None
     # Filter original VCF file for regions in gene panels:
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].raw_variants, [sample], qual)
+        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[2], [sample], qual)
 
     else: #No filtering by panel:
         vcf_obj = VCF(vcf_path)
-        vcf_results = get_variants(vcf_obj, vcf_obj.raw_variants, [sample], qual)
+        vcf_results = get_variants(vcf_obj, raw_variants, [sample], qual)
 
     #Do the actual variant removal:
     removed = remove_variants(connection, vcf_results[1][sample])
@@ -55,16 +55,19 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     # the number of original intervals in the bed panel
     # the number of variants mapping to these intervals
 
+    # Get number of raw variants in original VCF file:
+    raw_variants = count_variants(vcf_path)
+
     # If the vcf should be filtered by a gene panel bed file:
     panel_filtered_results = None
     vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[0].raw_variants, samples, qual)
+        vcf_results = get_variants(panel_filtered_results[0], panel_filtered_results[2], samples, qual)
 
     else:
         vcf_obj = VCF(vcf_path)
-        vcf_results = get_variants(vcf_obj, vcf_obj.raw_variants, samples, qual)
+        vcf_results = get_variants(vcf_obj, raw_variants, samples, qual)
 
     # get_variants() returns a this tuple-> ( n_total_vars, beacon_vars(type: dict), discaded_vars(type: dict))
     ### beacon_vars is a disctionary with key --> sample, and value --> list of tuples containing the non-reference variants. Each tuple is defined as: (chr, start, alt_allele)
@@ -76,8 +79,7 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
 
     # Print the pdf report with the variant upload results:
     if outfile:
-        # Get number of raw variants in original VCF file:
-        raw_variants = count_variants(vcf_path)
+
         print("Printing a report with beacon upload results to --> ",outfile)
         title = "Clinical Genomics Beacon: variants upload report"
         create_report(title, outfile, panel_path, raw_variants, qual, vcf_results, beacon_update_result, customer)
