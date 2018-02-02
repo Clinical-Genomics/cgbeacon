@@ -64,7 +64,8 @@ def remove_variants(conn, list_of_var_tuples):
     for var_tuple in list_of_var_tuples:
         try:
             # Remove 1 from the occurrence field if this is not the last occurrence
-            sql = "update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.occurrence > 1;"
+            #sql = "update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence-1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.occurrence > 1;"
+            sql = "update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence-1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s;"
             result = conn.execute(sql, var_tuple[1], var_tuple[0], var_tuple[2])
             delete_counter += result.rowcount
             if result.rowcount == 0: # If this is the last occurrence of this variant, remove the whole row.
@@ -77,6 +78,10 @@ def remove_variants(conn, list_of_var_tuples):
         except Exception as ex:
             print('Unexpected error:',ex)
 
+    # delete all records with no samples associated:
+    if delete_counter>0:
+        sql = "delete from beacon_data_table where = 0;"
+        delete_counter = conn.execute(sql)
     return delete_counter
 
 def insert_variants(conn, dataset, variant_dict, vars_to_beacon):

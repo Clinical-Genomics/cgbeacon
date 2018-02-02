@@ -16,6 +16,7 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
 
         Returns: number of new variants removed from the beacon for this sample.
     """
+    print("Counting raw variants..")
     raw_variants = count_variants(vcf_path)
     vcf_results = None
     panel_filtered_results = None
@@ -56,6 +57,7 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     # the number of variants mapping to these intervals
 
     # Get number of raw variants in original VCF file:
+    print("Counting raw variants..")
     raw_variants = count_variants(vcf_path)
 
     # If the vcf should be filtered by a gene panel bed file:
