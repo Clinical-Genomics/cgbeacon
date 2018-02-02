@@ -38,7 +38,7 @@ def vcf_intersect(vcf_path, bed_panel):
         LOG.info('Extracting %s intervals from the %s total entries of the VCF file.', gene_panel.count(), vcf_file.count())
         LOG.info('Number of variants found in the intervals:%s', intersected_vars)
 
-        temp_intersections_file = NamedTemporaryFile('w+t')
+        temp_intersections_file = NamedTemporaryFile('w+t', dir=os.getcwd())
         intersections.saveas(temp_intersections_file.name)
         mini_VCF = VCF(temp_intersections_file.name)
 

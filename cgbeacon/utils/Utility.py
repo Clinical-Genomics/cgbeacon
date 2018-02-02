@@ -65,8 +65,6 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     vcf_results = None
     if panel_path:
         panel_filtered_results = vcf_intersect(vcf_path, panel_path)
-        ## Extracts variants from mini-VCF file object:
-
     else:
         vcf_obj = VCF(vcf_path)
         panel_filtered_results = (vcf_obj, raw_variants, raw_variants)
