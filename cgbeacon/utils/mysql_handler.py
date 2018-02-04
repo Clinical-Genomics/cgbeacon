@@ -19,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 def use_mysqlalchemy(conn_url):
     """
-    Connects to beacon database using a connection uls and mysqlalchemy
+    Connects to beacon database using a connection url and mysqlalchemy
     """
     try:
         engine = sqlalchemy.create_engine(conn_url, echo=False, encoding='utf-8')
