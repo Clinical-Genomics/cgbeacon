@@ -19,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 def use_mysqlalchemy(conn_url):
     """
-    Connects to beacon database using a connection uls and mysqlalchemy
+    Connects to beacon database using a connection url and mysqlalchemy
     """
     try:
         engine = sqlalchemy.create_engine(conn_url, echo=False, encoding='utf-8')
@@ -50,7 +50,7 @@ def get_variant_number(conn):
         conn.close()
         return
 
-def remove_variants(conn, list_of_var_tuples):
+def remove_variants(conn, dataset, list_of_var_tuples):
     """
     Deletes variants from beacon
     """
@@ -63,20 +63,20 @@ def remove_variants(conn, list_of_var_tuples):
 
     for var_tuple in list_of_var_tuples:
         try:
+            unique_key = dataset+"_"+str(var_tuple[0])+"_"+str(var_tuple[1])+"_"+var_tuple[2]
             # Remove 1 from the occurrence field if this is not the last occurrence
-            sql = "update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.occurrence > 1;"
-            result = conn.execute(sql, var_tuple[1], var_tuple[0], var_tuple[2])
+            sql = "update beacon_data_table set occurrence = occurrence -1 where chr_pos_alt_dset=%s"
+            result = conn.execute(sql, unique_key)
             delete_counter += result.rowcount
-            if result.rowcount == 0: # If this is the last occurrence of this variant, remove the whole row.
-                sql = "delete from beacon_data_table where position=%s and chromosome=%s and alternate=%s"
-                result = conn.execute(sql, var_tuple[1], var_tuple[0], var_tuple[2])
-                delete_counter += result.rowcount
-
             pbar.update()
 
         except Exception as ex:
             print('Unexpected error:',ex)
 
+    # delete all records with no samples associated:
+    if delete_counter>0:
+        sql = "delete from beacon_data_table where occurrence = 0;"
+        conn.execute(sql)
     return delete_counter
 
 def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
@@ -100,15 +100,9 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                 warnings.simplefilter('ignore', pymysql.Warning)
 
                 try:
-                    sql="update beacon_data_table SET beacon_data_table.occurrence=beacon_data_table.occurrence+1 WHERE beacon_data_table.position=%s and beacon_data_table.chromosome=%s and beacon_data_table.alternate=%s and beacon_data_table.dataset_id=%s;"
-                    #sql = "insert ignore into beacon_data_table (dataset_id, chromosome, position, alternate) values (%s,%s,%s,%s);"
-                    result = conn.execute(sql, val[1], val[0], val[2], dataset)
-                    insert_counter += result.rowcount
-                    if result.rowcount == 0: #var was not present, must be inserted:
-                        sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence) values (%s,%s,%s,%s,1);"
-                        result = conn.execute(sql, dataset, val[0], val[1], val[2])
-                        insert_counter += result.rowcount
-
+                    unique_key = dataset+"_"+str(val[0])+"_"+str(val[1])+"_"+val[2]
+                    sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence, chr_pos_alt_dset) values (%s, %s, %s, %s, %s, %s) on duplicate key update occurrence = occurrence + 1"
+                    result = conn.execute(sql, dataset, val[0], str(val[1]), val[2], 1, unique_key)
                 except Exception as ex:
                     LOG.warn('Unexpected error:%s', ex)
 
