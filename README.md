@@ -42,16 +42,16 @@ From inside the MySQL shell, as root, create an empty database and name it 'elix
 create database elixir_beacon_dev;
 </pre>
 
-Download the database containing test variants from [here](db/elixir_beacon_dev.sql) and restore it on your local machine:
+Download the database data structure from [here](db/elixir_beacon_dev.sql) and restore it on your local machine:
 
 <pre>
 mysql -u [root] -p[root_password] elixir_beacon_dev < [path/to/downloaded/db.sql]
 </pre>
 
-Alternatively you migth download and restore a database not containing any variants ([link](db/elixir_beacon_testing.sql)), where you can import your own dataset:
+You can also set up a production MySQL database with the same data structure:
 
 <pre>
-mysql -u [root] -p[root_password] elixir_beacon_testing < [path/to/downloaded/db.sql]
+mysql -u [root] -p[root_password] elixir_beacon_prod < [path/to/downloaded/db.sql]
 </pre>
 
 From inside a MySQL shell, as root, create a new user named "microaccounts_dev", identified by a standard password 'r783qjkldDsiu', and grant it privileges over the newly-created database:
@@ -59,7 +59,7 @@ From inside a MySQL shell, as root, create a new user named "microaccounts_dev",
 <pre>
 CREATE USER 'microaccounts_dev'@'localhost' IDENTIFIED BY 'r783qjkldDsiu';
 GRANT ALL ON elixir_beacon_dev.* TO 'microaccounts_dev'@'localhost';
-GRANT ALL ON elixir_beacon_testing.* TO 'microaccounts_dev'@'localhost';
+GRANT ALL ON elixir_beacon_prod.* TO 'microaccounts_dev'@'localhost';
 FLUSH PRIVILEGES;
 </pre><br>
 
@@ -128,7 +128,7 @@ To run the jar, from terminal move into the target directory and type:
 java -jar elixir-beacon-0.3.jar --spring.profiles.active=dev
 </pre>
 
-The argument --spring.profiles.active=dev specifies the profile to be used. The other profile which could be used instead is 'test'. This latter profile requires the use and connection to a different database elixir_beacon_testing, described above.<br><br>
+The argument --spring.profiles.active=dev specifies the profile to be used. The other profile which could be used instead is 'test'. This latter profile requires the use and connection to a different database elixir_beacon_dev, described above.<br><br>
 
 ### Queries:
 
@@ -189,7 +189,7 @@ Database settings are specified by the connection string passed to the program. 
 <pre>
 mysql+pymysql://db_user:db_password@db_host:db_port/db_name
 </pre>
-If not provided by the user the following connection string is passed to the program: mysql+pymysql://microaccounts_dev:r783qjkldDsiu@localhost:3306/elixir_beacon_testing
+If not provided by the user the following connection string is passed to the program: mysql+pymysql://microaccounts_dev:r783qjkldDsiu@localhost:3306/elixir_beacon_dev
 
 #### Usage
 The program parses variants from a VCF file. Samples to be included in the Beacon database and variant quality threshold might be specified as optional parameters.
