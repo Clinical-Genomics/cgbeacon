@@ -67,7 +67,8 @@ def remove_variants(conn, dataset, list_of_var_tuples):
             # Remove 1 from the occurrence field if this is not the last occurrence
             sql = "update beacon_data_table set occurrence = occurrence -1 where chr_pos_alt_dset=%s"
             result = conn.execute(sql, unique_key)
-            delete_counter += result.rowcount
+            if result.rowcount > 0
+                delete_counter += 1
             pbar.update()
 
         except Exception as ex:
@@ -103,7 +104,9 @@ def insert_variants(conn, dataset, variant_dict, vars_to_beacon):
                     unique_key = dataset+"_"+str(val[0])+"_"+str(val[1])+"_"+val[2]
                     sql = "insert into beacon_data_table (dataset_id, chromosome, position, alternate, occurrence, chr_pos_alt_dset) values (%s, %s, %s, %s, %s, %s) on duplicate key update occurrence = occurrence + 1"
                     result = conn.execute(sql, dataset, val[0], str(val[1]), val[2], 1, unique_key)
-                    insert_counter += result.rowcount
+
+                    if result.rowcount >0:
+                        insert_counter += 1
 
                 except Exception as ex:
                     LOG.warn('Unexpected error:%s', ex)
