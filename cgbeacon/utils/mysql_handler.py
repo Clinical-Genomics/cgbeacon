@@ -67,7 +67,7 @@ def remove_variants(conn, dataset, list_of_var_tuples):
             # Remove 1 from the occurrence field if this is not the last occurrence
             sql = "update beacon_data_table set occurrence = occurrence -1 where chr_pos_alt_dset=%s"
             result = conn.execute(sql, unique_key)
-            if result.rowcount > 0
+            if result.rowcount > 0:
                 delete_counter += 1
             pbar.update()
 
