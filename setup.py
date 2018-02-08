@@ -17,6 +17,9 @@ DESCRIPTION = 'Extracts variants from a VCF file and inserts them into a Beacon 
 URL = 'https://github.com/Clinical-Genomics/cgbeacon'
 EMAIL = 'chiara.rasi@scilifelab.se'
 AUTHOR = 'Chiara Rasi'
+KEYWORDS = ['Genetic variants', 'VCF', 'sequencing', 'mutations', 'beacon']
+DOWNLOAD_URL = 'https://github.com/Clinical-Genomics/cgbeacon/tarball/0.1.0' #Add it to PyPI
+LICENSE = 'MIT'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -101,10 +104,9 @@ setup(
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
+    download_url = DOWNLOAD_URL,
+    keywords = KEYWORDS,
     packages=find_packages(exclude=('tests',)),
-    # If your package is a single module, use this instead of 'packages':
-    # py_modules=['mypackage'],
-
 
     entry_points={
         'console_scripts': [
@@ -114,7 +116,7 @@ setup(
 
     install_requires=REQUIRED,
     include_package_data=True,
-    license='MIT',
+    license=LICENSE,
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -128,7 +130,10 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy'
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Intended Audience :: Science/Research',
+        'Operating System :: MacOS',
+        'Operating System :: Unix'
     ],
     # $ setup.py publish support.
     cmdclass={
