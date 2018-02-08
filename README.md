@@ -48,7 +48,14 @@ Download the database data structure from [here](db/elixir_beacon_dev.sql) and r
 mysql -u [root] -p[root_password] elixir_beacon_dev < [path/to/downloaded/db.sql]
 </pre>
 
-You can also set up a production MySQL database with the same data structure:
+You can also set up a production MySQL database with the same data structure. 
+First create it from a MySQL shell:
+
+<pre>
+create database elixir_beacon_prod;
+</pre>
+
+Then import into it the same data structure as the devel one:
 
 <pre>
 mysql -u [root] -p[root_password] elixir_beacon_prod < [path/to/downloaded/db.sql]
