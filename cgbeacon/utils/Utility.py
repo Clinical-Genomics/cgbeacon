@@ -32,7 +32,6 @@ def beacon_clean(connection, sample, vcf_path, panel_path=None, qual=20):
     #Do the actual variant removal:
     removed = remove_variants(connection, 'clinicalgenomics', vcf_results[1][sample])
     dataset_vars = update_dataset_vars(connection, 'clinicalgenomics', variants_per_dataset(connection, 'clinicalgenomics'))
-    print("new number of variants in 'clinicalgenomics' is:",dataset_vars)
     return removed
 
 def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, customer="", samples=None, qual=20, genome_reference="grch37"):
@@ -81,7 +80,6 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
     beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
     dataset_vars = update_dataset_vars(connection, 'clinicalgenomics', variants_per_dataset(connection, 'clinicalgenomics'))
-    print("new number of variants in 'clinicalgenomics' is:",dataset_vars)
 
     # Print the pdf report with the variant upload results:
     if outfile:
