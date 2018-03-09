@@ -183,7 +183,8 @@ def db_handler( dataset, variant_dict, vars_to_beacon, connect_string, reference
     time0_vars = get_variant_number(conn)
 
     #insert variants:
-    inserted_variants = insert_variants(conn, dataset, variant_dict, vars_to_beacon)
+    insert_variants(conn, dataset, variant_dict, vars_to_beacon)
+    inserted_variants = get_variant_number(conn)
 
     if inserted_variants:
         LOG.info('Number of new inserted variants from the VCF file:%s',inserted_variants)
@@ -224,7 +225,10 @@ def bare_variants_uploader(conn, dataset, variant_dict, genome_reference):
             n_insert_attemps +=1
 
     # Try to insert variants
-    inserted_variants = insert_variants(conn, dataset, variant_dict, n_insert_attemps)
+    insert_variants(conn, dataset, variant_dict, n_insert_attemps)
+
+    # count variants in the beacon after insertion:
+    inserted_variants = get_variant_number(conn)
 
     if inserted_variants:
         LOG.info('Number of new inserted variants from the VCF file:%s',inserted_variants)

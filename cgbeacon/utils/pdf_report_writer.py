@@ -81,7 +81,7 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         xcoord -= 10
         pdf.drawString(38, xcoord, "Samples")
         pdf.drawString(250, xcoord, "Variants to submit")
-        pdf.drawString(400, xcoord, "Variants with Qual<="+str(qual))
+        pdf.drawString(400, xcoord, "Variants excluded because of quality")
         xcoord -= 8
         pdf.line(38,xcoord,575,xcoord)
         xcoord -= 5

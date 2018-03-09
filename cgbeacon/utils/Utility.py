@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from cyvcf2 import VCF
-from cgbeacon.utils.mysql_handler import bare_variants_uploader, remove_variants, variants_per_dataset, update_dataset_vars
+from cgbeacon.utils.mysql_handler import bare_variants_uploader, remove_variants, variants_per_dataset, update_dataset_vars, get_variant_number
 from cgbeacon.utils.vcf_panel_filter import vcf_intersect
 from cgbeacon.utils.vcfparser import get_variants, count_variants
 from cgbeacon.utils.pdf_report_writer import create_report
@@ -79,7 +79,9 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
 
     # Insert variants into the beacon. It returns a tuple: (vars_before_upload, vars_after_upload)
     beacon_update_result = bare_variants_uploader(connection, dataset, vcf_results, genome_reference)
-    dataset_vars = update_dataset_vars(connection, 'clinicalgenomics', variants_per_dataset(connection, 'clinicalgenomics'))
+    update_result = update_dataset_vars(connection, 'clinicalgenomics', variants_per_dataset(connection, 'clinicalgenomics'))
+    #tot_vars = get_variant_number(connection)
+
 
     # Print the pdf report with the variant upload results:
     if outfile:
