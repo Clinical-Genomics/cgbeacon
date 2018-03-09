@@ -89,5 +89,5 @@ def beacon_upload(connection, vcf_path, panel_path, dataset, outfile=None, custo
         create_report(title, outfile, panel_path, raw_variants, qual, vcf_results, beacon_update_result, customer)
 
     # Return the number of new vars uploaded in beacon
-    print("new vars in beacon:", beacon_update_result[1])
+    print("new vars in beacon:", beacon_update_result[1] - beacon_update_result[0])
     return beacon_update_result[1]

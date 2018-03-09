@@ -100,9 +100,9 @@ def create_report(title, outfile, panel, raw_variants, qual, VCF_parsing_results
         xcoord -= 20
         pdf.drawString(38, xcoord, "Number of variants in Beacon BEFORE submission: " + str(database_insert_results[0]))
         xcoord -= 20
-        pdf.drawString(38, xcoord, "Number of new variants submitted to Beacon: " + str(database_insert_results[1]))
+        pdf.drawString(38, xcoord, "Number of new variants submitted to Beacon: " + str(database_insert_results[1] - database_insert_results[0]))
         xcoord -= 20
-        pdf.drawString(38, xcoord, "Number of variants in Beacon AFTER submission: " + str(database_insert_results[0]+database_insert_results[1]))
+        pdf.drawString(38, xcoord, "Number of variants in Beacon AFTER submission: " + str(database_insert_results[1]))
 
         pdf.drawString(500, 50, "page 1 of 1")
         pdf.save()
