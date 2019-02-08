@@ -3,7 +3,7 @@ coloredlogs
 
 # parsing VCFs
 cyvcf2
-pysam
+pysam==0.13
 
 # connection to db
 pymysql
@@ -13,7 +13,7 @@ SQLAlchemy
 enlighten
 
 # filtering for gene panels
-pybedtools
+pybedtools==0.7.10
 
 # generating a PDF report
 reportlab
